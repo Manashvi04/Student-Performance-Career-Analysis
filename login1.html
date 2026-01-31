@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Student Performance & Career Analysis System</title>
+    <!-- <link rel="stylesheet" href="styles.css"> Reuse from homepage -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Login Page Styles */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to right, #f0f8ff, #e6f7ff);
+}
+
+.login-form {
+    background-color: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-form h2 {
+    margin-bottom: 10px;
+    color: #007bff;
+}
+
+.login-form p {
+    margin-bottom: 20px;
+    color: #666;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.form-group input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.error {
+    color: red;
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+.note {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .login-form {
+        padding: 20px;
+    }
+}
+</style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-form">
+            <h2>Login to Your Account</h2>
+            <p>Enter your admin-provided credentials to access the system.</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="e.g., 12345@collegename.edu.in" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+            <div id="errorMessage" class="error"></div>
+            <p class="note">Forgot credentials? Contact your admin.</p>
+        </div>
+    </div>
+
+    <script>
+        // Existing code from homepage (e.g., menu toggle, smooth scrolling) remains...
+
+// Login Form Validation and Redirection
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // Prevent default form submission
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const errorMessage = document.getElementById('errorMessage');
+
+    // Clear previous errors
+    errorMessage.textContent = '';
+
+    // Basic password check (non-empty; in real app, validate against backend)
+    if (!password) {
+        errorMessage.textContent = 'Password is required.';
+        return;
+    }
+
+    // Email validation and user type determination
+    const domain = '@collegename.edu.in'; // Replace with your actual domain
+    let userType = null;
+
+    if (email.endsWith(domain)) {
+        const prefix = email.split('@')[0];
+        
+        // Check for Admin
+        if (prefix === 'admin') {
+            userType = 'admin';
+        }
+        // Check for Student (numeric roll number)
+        else if (/^\d+$/.test(prefix)) {
+            userType = 'student';
+        }
+        // Check for Faculty (department subdomain, e.g., name@dept.collegename.edu.in)
+        else if (email.includes('.' + domain.split('@')[1])) {
+            // Assuming faculty emails have a dot before the domain, like dept.collegename.edu.in
+            const parts = email.split('@');
+            if (parts.length === 2 && parts[1].startsWith(prefix.split('.')[1] || '')) {
+                userType = 'faculty';
+            }
+        }
+    }
+
+    if (!userType) {
+        errorMessage.textContent = 'Invalid email format. Please use your admin-provided credentials.';
+        return;
+    }
+
+    // Mock successful login (in real app, send to backend for verification)
+    // For demo, assume any valid email/password combo is accepted
+    alert(`Login successful! Redirecting to ${userType} dashboard.`);
+
+    // Redirect based on user type
+    switch (userType) {
+        case 'student':
+            window.location.href = 'student-dashboard.html'; // Create this page
+            break;
+        case 'faculty':
+            window.location.href = 'faculty-dashboard.html'; // Create this page
+            break;
+        case 'admin':
+            window.location.href = 'admin-dashboard.html'; // Create this page
+            break;
+        default:
+            errorMessage.textContent = 'Unexpected error. Please try again.';
+    }
+});
+    </script>
+    <!-- <script src="script.js"></script> Reuse and extend from homepage -->
+</body>
+</html>
