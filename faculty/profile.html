@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Faculty Profile</title>
+  <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="profile.css">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <h2>
+      <i class="fa-solid fa-user-tie"></i> Faculty
+    </h2>
+
+    <!-- FACULTY INFO -->
+    <a href="profile.html" class="faculty-info-link">
+      <div class="faculty-info">
+        <img id="sidebarPhoto" src="faculty.jpg">
+        <h3 id="sidebarName">Faculty</h3>
+        <p id="sidebarDept">Department</p>
+      </div>
+    </a>
+
+    <nav>
+      <a class="nav-link" href="dashboard.html">
+        <i class="fa-solid fa-chart-line"></i> Dashboard
+      </a>
+
+      <a class="nav-link active">
+        <i class="fa-solid fa-id-card"></i> Faculty Profile
+      </a>
+
+      <a class="nav-link" href="dashboard.html#students">
+        <i class="fa-solid fa-users"></i> Students
+      </a>
+
+      <a class="nav-link" href="dashboard.html#upload">
+        <i class="fa-solid fa-file-csv"></i> Upload Marks
+      </a>
+
+      <a class="nav-link" href="dashboard.html#analytics">
+        <i class="fa-solid fa-chart-column"></i> Analytics
+      </a>
+
+      <a class="logout" href="login.html">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </a>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main profile-page">
+
+    <h2>Faculty Profile</h2>
+
+    <!-- PROFILE PHOTO -->
+    <div class="profile-photo">
+      <img id="profileImg" src="faculty.jpg">
+      <label class="upload-btn">
+        Change Photo
+        <input type="file" accept="image/*" onchange="changePhoto(event)" hidden>
+      </label>
+    </div>
+
+    <!-- PROFILE FORM -->
+    <form id="profileForm">
+
+      <!-- PERSONAL INFORMATION -->
+      <h3 class="section-title">Personal Information</h3>
+      <div class="form-grid">
+        <input name="fullName" placeholder="Full Name">
+        <input name="displayName" placeholder="Display Name">
+        <input name="facultyId" placeholder="Faculty ID">
+        <input type="date" name="dob">
+
+        <select name="gender">
+          <option value="">Gender</option>
+          <option>Male</option>
+          <option>Female</option>
+        </select>
+
+        <input name="bloodGroup" placeholder="Blood Group">
+        <input name="nationality" placeholder="Nationality">
+        <input name="aadhaar" placeholder="Aadhaar Number">
+      </div>
+
+      <!-- COLLEGE / ACADEMIC INFO -->
+      <h3 class="section-title">College & Academic Information</h3>
+      <div class="form-grid">
+        <input name="department" placeholder="Department">
+        <input name="designation" placeholder="Designation (Professor / Asst. Prof)">
+        <input name="degree" placeholder="Highest Degree (PhD / M.Tech)">
+        <input name="specialization" placeholder="Specialization">
+        <input name="university" placeholder="University">
+        <input name="experience" placeholder="Teaching Experience (Years)">
+      </div>
+
+      <!-- TEACHING DETAILS -->
+      <h3 class="section-title">Teaching Details</h3>
+      <div class="form-grid">
+        <input name="subjectsTaught" placeholder="Subjects Taught (CN, DBMS, OS)">
+        <input name="classesHandled" placeholder="Classes Handled (CE-A, CE-B)">
+        <input name="currentSemester" placeholder="Current Semester">
+        <input name="institute" placeholder="Institute / College Name">
+      </div>
+
+      <!-- EXPERTISE -->
+      <h3 class="section-title">Area of Expertise</h3>
+      <div class="form-grid">
+        <input name="expertSubject" placeholder="Expert Subjects">
+        <input name="researchArea" placeholder="Research Areas">
+        <input name="skills" placeholder="Technical Skills">
+        <input name="certifications" placeholder="Certifications">
+      </div>
+
+      <button type="submit" class="save-btn">
+        <i class="fa-solid fa-floppy-disk"></i> Update Profile
+      </button>
+
+    </form>
+
+  </main>
+
+</div>
+
+<script src="profile.js"></script>
+</body>
+</html>

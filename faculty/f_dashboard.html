@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Faculty Academic Dashboard</title>
+<link rel="stylesheet" href="dashboard.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="layout">
+
+<aside class="sidebar">
+  <h2>
+    <i class="fa-solid fa-user-tie"></i> Faculty
+  </h2>
+<a href="profile.html" class="faculty-info-link">
+  <div class="faculty-info">
+    <img id="sidebarPhoto" src="faculty.jpg">
+    <h3 id="sidebarName">Faculty</h3>
+    <p id="sidebarDept">Department</p>
+  </div>
+</a>
+
+
+
+  <nav>
+<a class="nav-link active" onclick="showSection('overview', this)">
+  <i class="fa-solid fa-chart-line"></i> Dashboard
+</a>
+
+<!-- <a class="nav-link" onclick="showSection('faculty', this)">
+  <i class="fa-solid fa-id-card"></i> Faculty Profile
+</a> -->
+
+<a class="nav-link" onclick="showSection('students', this)">
+  <i class="fa-solid fa-users"></i> Students
+</a>
+
+<a class="nav-link" onclick="showSection('upload', this)">
+  <i class="fa-solid fa-file-csv"></i> Upload Marks
+</a>
+
+<a class="nav-link" onclick="showSection('analytics', this)">
+  <i class="fa-solid fa-chart-column"></i> Analytics
+</a>
+<a class="logout" href="login.html">
+  <i class="fa-solid fa-right-from-bracket"></i> Logout
+</a>
+  </nav>
+</aside>
+
+
+<main class="main">
+
+<!-- OVERVIEW -->
+<section id="overview" class="section active overview-box">
+  <div class="cards">
+
+    <!-- TOTAL STUDENTS -->
+    <div class="card" onclick="showSection('students')">
+      <h3>
+        <i class="fa-solid fa-users"></i> Student Strength
+      </h3>
+      <p>Total enrolled students across departments</p>
+      <span class="card-value">30 Students</span>
+    </div>
+
+    <!-- ANALYTICS -->
+    <div class="card" onclick="showSection('analytics')">
+      <h3>
+        <i class="fa-solid fa-chart-line"></i> Academic Performance
+      </h3>
+      <p>Subject-wise and department-wise analysis</p>
+      <span class="card-value">View Insights</span>
+    </div>
+
+    <!-- UPLOAD MARKS -->
+    <div class="card" onclick="showSection('upload')">
+      <h3>
+        <i class="fa-solid fa-file-csv"></i> Marks Management
+      </h3>
+      <p>Upload and manage marks using CSV / Excel</p>
+      <span class="card-value">Upload Files</span>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- STUDENTS -->
+<section id="students" class="section">
+  <h2>All Students</h2>
+
+  <input
+    type="text"
+    id="studentSearch"
+    placeholder="Search by ID, Name or Department (IT / CE / CSE)"
+    onkeyup="searchStudent(this.value)"
+    class="student-search"
+  >
+
+  <div id="studentList" class="student-list"></div>
+</section>
+
+
+<!-- UPLOAD -->
+<section id="upload" class="section">
+  <h2>Upload Marks (CSV / Excel)</h2>
+  <p class="sub-text">Select a department and upload student marks</p>
+
+  <div class="upload-grid">
+
+    <!-- IT -->
+    <div class="upload-card">
+      <h3>IT Department</h3>
+      <input type="file" accept=".csv,.xlsx" onchange="uploadCSV(event, 'IT')">
+      <table id="ITTable" class="preview-table"></table>
+    </div>
+
+    <!-- CE -->
+    <div class="upload-card">
+      <h3>CE Department</h3>
+      <input type="file" accept=".csv,.xlsx" onchange="uploadCSV(event, 'CE')">
+      <table id="CETable" class="preview-table"></table>
+    </div>
+
+    <!-- CSE -->
+    <div class="upload-card">
+      <h3>CSE Department</h3>
+      <input type="file" accept=".csv,.xlsx" onchange="uploadCSV(event, 'CSE')">
+      <table id="CSETable" class="preview-table"></table>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ANALYTICS -->
+<section id="analytics" class="section">
+  <h2>Performance Analytics</h2>
+
+  <div class="analytics-grid">
+
+    <!-- IT DEPARTMENT -->
+    <div class="chart-box">
+      <h4>IT Department – Subject Average</h4>
+      <canvas id="itChart"></canvas>
+    </div>
+
+    <!-- CE DEPARTMENT -->
+    <div class="chart-box">
+      <h4>CE Department – Subject Average</h4>
+      <canvas id="ceChart"></canvas>
+    </div>
+
+    <!-- CSE DEPARTMENT -->
+    <div class="chart-box">
+      <h4>CSE Department – Subject Average</h4>
+      <canvas id="cseChart"></canvas>
+    </div>
+ <div class="chart-box">
+      <h4>Overall Department Performance</h4>
+      <canvas id="deptPieChart"></canvas>
+    </div>
+  </div>
+</section>
+
+
+</main>
+</div>
+
+<script src="dashboard.js"></script>
+</body>
+</html>
