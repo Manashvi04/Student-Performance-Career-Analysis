@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Career Trajectory</title>
+
+<style>
+:root { --primary:#1e3c72; --white:#ffffff; }
+
+body { margin:0; font-family:Arial, sans-serif; background:var(--white); }
+.layout { display:flex; min-height:100vh; }
+
+/* Sidebar */
+.sidebar { width:220px; background:var(--primary); padding:20px; }
+.sidebar h2 { color:#fff; text-align:center; margin-bottom:30px; }
+.sidebar a { display:block; color:#fff; text-decoration:none; padding:10px; margin-bottom:10px; border-radius:4px; }
+.sidebar a:hover { background:rgba(255,255,255,0.2); }
+
+/* Main */
+.main { flex:1; padding:20px; }
+h2,h3 { color:var(--primary); }
+
+.career-cards { display:flex; gap:20px; }
+.card {
+  flex:1; background:#fff; padding:20px; border-left:5px solid var(--primary);
+  border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+ul { padding-left:20px; }
+li { margin-bottom:6px; }
+</style>
+</head>
+
+<body>
+<div class="layout">
+  <div class="sidebar">
+    <h2>Student Panel</h2>
+    <a href="s_dashboard.html">Dashboard</a>
+    <a href="performance_analysis.html">Performance Analysis</a>
+    <a href="career_trajectory.html">Career Trajectory</a>
+    <a href="../login.html">Logout</a>
+  </div>
+
+  <div class="main">
+    <h2>Career Trajectory Recommendation</h2>
+
+    <div class="career-cards">
+      <div class="card">
+        <h3>Recommended Career</h3>
+        <p id="careerName"></p>
+      </div>
+
+      <div class="card">
+        <h3>Why This Career?</h3>
+        <ul id="reasonList"></ul>
+      </div>
+
+      <div class="card">
+        <h3>Skills to Improve</h3>
+        <ul id="skillsList"></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Simple rule-based logic (beginner-friendly)
+const performance = {
+  programming:true,
+  analytics:true,
+  systems:false
+};
+
+let career = "Data Analyst";
+let reasons = ["Strong programming skills", "Good analytical performance"];
+let skills = ["Statistics", "Data Visualization", "Advanced SQL"];
+
+if(!performance.systems){
+  skills.push("Operating Systems basics");
+}
+
+document.getElementById("careerName").textContent = career;
+reasons.forEach(r=>{
+  const li=document.createElement("li"); li.textContent=r;
+  document.getElementById("reasonList").appendChild(li);
+});
+skills.forEach(s=>{
+  const li=document.createElement("li"); li.textContent=s;
+  document.getElementById("skillsList").appendChild(li);
+});
+</script>
+</body>
+</html>

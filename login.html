@@ -131,6 +131,50 @@
             © 2026 Student Performance & Career Analysis System
         </div>
     </div>
+<script>
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+    e.preventDefault();
 
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    if (email === "" || password === "") {
+        alert("Please enter email and password");
+        return;
+    }
+
+    Papa.parse("users.csv", {
+        download: true,
+        header: true,
+        complete: function (results) {
+            const users = results.data;
+
+            const user = users.find(
+                u => u.email === email && u.password === password
+            );
+
+            if (!user) {
+                alert("Invalid credentials");
+                return;
+            }
+
+            // 🔐 ROLE IDENTIFICATION USING EMAIL FORMAT
+            if (email === "admin@charusat.ac.in") {
+                window.location.href = "admin_dashboard.html";
+            } 
+            else if (email.includes(".it@charusat.edu.in")) {
+                window.location.href = "faculty_dashboard.html";
+            } 
+            else if (email.endsWith("@charusat.edu.in")) {
+                window.location.href = "student_dashboard.html";
+            } 
+            else {
+                alert("Unauthorized user");
+            }
+        }
+    });
+});
+
+</script>
 </body>
 </html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Performance Analysis</title>
+
+<style>
+:root { --primary:#1e3c72; --white:#ffffff; }
+
+body { margin:0; font-family:Arial, sans-serif; background:var(--white); }
+.layout { display:flex; min-height:100vh; }
+
+/* Sidebar */
+.sidebar 
+{ 
+    width:220px; 
+    background:var(--primary); 
+    padding:20px; 
+
+}
+.sidebar h2 
+{ 
+    color:#fff; 
+    text-align:center; 
+    margin-bottom:30px; 
+}
+
+.sidebar a 
+{ 
+    display:block; 
+    color:#fff; 
+    text-decoration:none; 
+    padding:10px; 
+    margin-bottom:10px; 
+    border-radius:4px; 
+}
+.sidebar a:hover 
+{ 
+    background:rgba(255,255,255,0.2); 
+}
+
+/* Main */
+.main { flex:1; padding:20px; }
+h2,h3 { color:var(--primary); }
+
+.cards { display:flex; gap:20px; margin-bottom:30px; }
+.card {
+  flex:1; background:#fff; padding:20px; border-left:5px solid var(--primary);
+  border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+ul { padding-left:20px; }
+li { margin-bottom:8px; }
+
+.summary {
+  background:#fff; padding:20px; border-left:5px solid var(--primary);
+  border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+</style>
+</head>
+
+<body>
+<div class="layout">
+  <div class="sidebar">
+    <h2>Student Panel</h2>
+    <a href="s_dashboard.html">Dashboard</a>
+    <a href="performance_analysis.html">Performance Analysis</a>
+    <a href="career_trajectory.html">Career Trajectory</a>
+    <a href="../login.html">Logout</a>
+  </div>
+
+  <div class="main">
+    <h2>Performance Analysis</h2>
+
+    <div class="cards">
+      <div class="card">
+        <h3>Strong Subjects</h3>
+        <ul id="strongList"></ul>
+      </div>
+      <div class="card">
+        <h3>Weak Subjects</h3>
+        <ul id="weakList"></ul>
+      </div>
+    </div>
+
+    <div class="summary">
+      <h3>Performance Summary</h3>
+      <p id="summaryText"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const subjects = [
+  {name:"Python", marks:88},
+  {name:"DBMS", marks:82},
+  {name:"Mathematics", marks:85},
+  {name:"Operating Systems", marks:65},
+  {name:"Computer Networks", marks:68}
+];
+
+const strongList = document.getElementById("strongList");
+const weakList = document.getElementById("weakList");
+
+subjects.forEach(s=>{
+  const li=document.createElement("li");
+  li.textContent = s.name + " ("+s.marks+")";
+  if(s.marks>=80) strongList.appendChild(li);
+  else if(s.marks<70) weakList.appendChild(li);
+});
+
+document.getElementById("summaryText").textContent =
+  "The student performs strongly in programming and analytical subjects. Improvement is required in core system subjects to enhance overall academic performance.";
+</script>
+</body>
+</html>
