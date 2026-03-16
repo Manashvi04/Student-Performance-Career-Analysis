@@ -1,0 +1,101 @@
+{% extends "base_s.html" %}
+
+{% block title %}Career Trajectory{% endblock %}
+
+{% block content %}
+
+<style>
+
+h2,h3{
+color:#1e3c72;
+}
+
+.career-cards{
+display:flex;
+gap:20px;
+}
+
+.card{
+flex:1;
+background:#fff;
+padding:20px;
+border-left:5px solid #1e3c72;
+border-radius:8px;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+
+ul{
+padding-left:20px;
+}
+
+li{
+margin-bottom:6px;
+}
+
+</style>
+
+<h2>Career Trajectory Recommendation</h2>
+
+<div class="career-cards">
+
+<div class="card">
+<h3>Recommended Career</h3>
+<p id="careerName"></p>
+</div>
+
+<div class="card">
+<h3>Why This Career?</h3>
+<ul id="reasonList"></ul>
+</div>
+
+<div class="card">
+<h3>Skills to Improve</h3>
+<ul id="skillsList"></ul>
+</div>
+
+</div>
+
+<script>
+
+// Simple rule-based logic (beginner-friendly)
+
+const performance = {
+programming:true,
+analytics:true,
+systems:false
+}
+
+let career = "Data Analyst"
+
+let reasons = [
+"Strong programming skills",
+"Good analytical performance"
+]
+
+let skills = [
+"Statistics",
+"Data Visualization",
+"Advanced SQL"
+]
+
+if(!performance.systems){
+skills.push("Operating Systems basics")
+}
+
+document.getElementById("careerName").textContent = career
+
+reasons.forEach(r=>{
+const li=document.createElement("li")
+li.textContent=r
+document.getElementById("reasonList").appendChild(li)
+})
+
+skills.forEach(s=>{
+const li=document.createElement("li")
+li.textContent=s
+document.getElementById("skillsList").appendChild(li)
+})
+
+</script>
+
+{% endblock %}

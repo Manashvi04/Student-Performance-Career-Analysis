@@ -1,0 +1,71 @@
+{% extends "base_s.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+
+<h2>Welcome, {{ session.get('name','Student') }}</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>CGPA</h3>
+<p>8.2</p>
+</div>
+
+<div class="card">
+<h3>Attendance</h3>
+<p>87%</p>
+</div>
+
+<div class="card">
+<h3>Performance</h3>
+<p>Good</p>
+</div>
+
+</div>
+
+<div class="charts">
+
+<div class="chart-box">
+<h3>Subject-wise Marks</h3>
+<canvas id="marksChart"></canvas>
+</div>
+
+<div class="chart-box">
+<h3>Attendance Trend</h3>
+<canvas id="attendanceChart"></canvas>
+</div>
+
+</div>
+
+<script>
+
+new Chart(document.getElementById('marksChart'), {
+type:'bar',
+data:{
+labels:['Maths','DBMS','Python','OS','CN'],
+datasets:[{
+label:'Marks',
+data:[78,85,88,65,72],
+backgroundColor:'#1e3c72'
+}]
+}
+})
+
+new Chart(document.getElementById('attendanceChart'), {
+type:'line',
+data:{
+labels:['Sem1','Sem2','Sem3','Sem4'],
+datasets:[{
+label:'Attendance %',
+data:[82,84,87,90],
+borderColor:'#1e3c72',
+fill:false
+}]
+}
+})
+
+</script>
+
+{% endblock %}

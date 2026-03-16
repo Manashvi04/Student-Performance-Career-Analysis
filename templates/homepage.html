@@ -330,7 +330,7 @@ a {
                     <li><a href="#features">Features</a></li>
                     <li><a href="#about">About</a></li>
                     <li><a href="#contact">Contact</a></li>
-                    <li><a href="login.html" class="btn-login">Login</a></li>
+                    <li><a href="{{ url_for('login_page') }}" class="btn-login">Login</a></li>
                 </ul>
             </nav>
         </div>
@@ -342,7 +342,7 @@ a {
             <div class="hero-content">
                 <h2>Unlock Your Academic Potential and Career Path</h2>
                 <p>Analyze your performance, identify strengths and weaknesses, and discover tailored career suggestions with data-driven insights. Designed for students and faculty in educational institutions.</p>
-                <a href="login.html" class="btn-primary">Get Started – Login Now</a>
+                <a href="{{ url_for('login_page') }}" class="btn-primary">Get Started – Login Now</a>
                 <a href="#features" class="btn-secondary">Learn More</a>
             </div>
             <div class="hero-image">
@@ -402,7 +402,7 @@ a {
         <div class="container">
             <h2>Ready to Transform Your Academic Journey?</h2>
             <p>Join thousands of students and educators using our platform.</p>
-            <a href="login.html" class="btn-primary">Login to Access</a>
+            <a href="{{ url_for('login_page') }}" class="btn-primary">Login to Access</a>
             <!-- <p>Don't have an account? <a href="register.html">Register here</a>.</p> -->
         </div>
     </section>
