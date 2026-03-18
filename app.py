@@ -39,7 +39,7 @@ def login():
     conn.close()
 
     if user:
-        session['id'] = user[0]   # store name
+        session['id'] = user[0]
         role = user[0]
 
         if role == "admin":
@@ -49,7 +49,8 @@ def login():
         else:
             return redirect("/student")
 
-    return "Invalid Login"
+    # show error on same login page
+    return render_template("login.html", error="⚠ User not found or invalid password")
 
 
 # Dashboards

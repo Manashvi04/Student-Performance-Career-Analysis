@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Profile</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+body{
+font-family:Segoe UI;
+background:#f4f6fb;
+margin:0;
+padding:40px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+h2{
+color:#2a5298;
+margin-bottom:20px;
+}
+
+.section-title{
+margin-top:25px;
+color:#444;
+border-bottom:2px solid #eee;
+padding-bottom:5px;
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+margin-top:15px;
+}
+
+input{
+padding:10px;
+border:1px solid #ccc;
+border-radius:6px;
+font-size:14px;
+}
+
+input:disabled{
+background:#f2f2f2;
+}
+
+.profile-photo{
+text-align:center;
+margin-bottom:20px;
+}
+
+.profile-photo img{
+width:120px;
+height:120px;
+border-radius:50%;
+object-fit:cover;
+border:3px solid #2a5298;
+}
+
+.btn{
+padding:10px 18px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+margin-top:20px;
+}
+
+.edit-btn{
+background:#ff9800;
+color:white;
+}
+
+.save-btn{
+background:#2a5298;
+color:white;
+display:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Student Profile</h2>
+
+<div class="profile-photo">
+<img id="profileImg" src="student.png">
+</div>
+
+<form id="profileForm">
+
+<h3 class="section-title">Personal Information</h3>
+
+<div class="form-grid">
+
+<input name="student_id" placeholder="Student ID" readonly>
+<input name="email" placeholder="College Email" readonly>
+
+<input name="name" placeholder="Full Name">
+<input type="date" name="dob">
+
+<input name="department" placeholder="Department">
+<input name="program" placeholder="Program">
+
+<input name="nationality" placeholder="Nationality">
+<input name="aadhaar" placeholder="Aadhaar Number">
+
+</div>
+
+<button type="button" class="btn edit-btn" onclick="enableEdit()">
+<i class="fa fa-pen"></i> Update
+</button>
+
+<button type="submit" class="btn save-btn" id="saveBtn">
+<i class="fa fa-save"></i> Save
+</button>
+
+</form>
+
+</div>
+
+
+<script>
+
+const form=document.getElementById("profileForm");
+const saveBtn=document.getElementById("saveBtn");
+
+
+/* LOAD PROFILE DATA */
+
+window.onload=async()=>{
+
+const res=await fetch("/student/get_profile");
+
+const data=await res.json();
+
+Object.keys(data).forEach(key=>{
+if(form[key]){
+form[key].value=data[key];
+}
+});
+
+/* disable editing */
+
+[...form.elements].forEach(el=>{
+if(el.name && el.name!=="student_id" && el.name!=="email"){
+el.disabled=true;
+}
+});
+
+};
+
+
+/* ENABLE EDIT */
+
+function enableEdit(){
+
+[...form.elements].forEach(el=>{
+if(el.name && el.name!=="student_id" && el.name!=="email"){
+el.disabled=false;
+}
+});
+
+saveBtn.style.display="inline-block";
+
+}
+
+
+/* SAVE PROFILE */
+
+form.onsubmit=async(e)=>{
+
+e.preventDefault();
+
+const data={};
+
+[...form.elements].forEach(el=>{
+if(el.name){
+data[el.name]=el.value;
+}
+});
+
+const res=await fetch("/student/update_profile",{
+
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify(data)
+
+});
+
+const result=await res.json();
+
+alert(result.message);
+
+saveBtn.style.display="none";
+
+};
+
+</script>
+
+</body>
+</html>
