@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Faculty Dashboard</h1>
+    <p>Welcome, Professor {{ user_id }}.</p>
+</div>
+
+<div class="dashboard-grid">
+    <div class="card">
+        <h3>My Students</h3>
+        <p>View performance metrics of students under your mentorship.</p>
+    </div>
+    
+    <div class="card">
+        <h3>Class Analytics</h3>
+        <p>Overall academic performance trends of the classes you teach.</p>
+    </div>
+
+    <div class="card">
+        <h3>Input Grades & feedback</h3>
+        <p>Update student records, add skill assessments, and provide qualitative feedback.</p>
+        <button class="btn-primary" style="margin-top: 1rem;">Add Assessment</button>
+    </div>
+</div>
+{% endblock %}

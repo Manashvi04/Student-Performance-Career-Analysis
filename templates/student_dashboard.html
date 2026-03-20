@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Student Dashboard</h1>
+    <p>Welcome, {{ user_id }}. Here is your performance overview.</p>
+</div>
+
+<div class="dashboard-grid">
+    <div class="card">
+        <h3>Academic Performance</h3>
+        <p>Your current CGPA and course-wise grades will appear here.</p>
+    </div>
+    
+    <div class="card">
+        <h3>Skill Assessment</h3>
+        <p>View your technical and soft skills evaluations provided by faculties.</p>
+    </div>
+
+    <div class="card">
+        <h3>Career Trajectory Analysis</h3>
+        <p>Predicted career paths, job fit, and suggested courses based on your current profile.</p>
+    </div>
+</div>
+{% endblock %}

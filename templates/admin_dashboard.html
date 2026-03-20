@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Administrator Dashboard</h1>
+    <p>System Management Console</p>
+</div>
+
+<div class="dashboard-grid">
+    <div class="card">
+        <h3>Manage Users</h3>
+        <p>Generate accounts and random passwords for Students and Faculty. Distribute credentials securely.</p>
+        <button class="btn-primary" style="margin-top: 1rem;">Add New User</button>
+    </div>
+    
+    <div class="card">
+        <h3>System Analytics</h3>
+        <p>View institution-wide performance and career placement statistics.</p>
+    </div>
+
+    <div class="card">
+        <h3>Database Management</h3>
+        <p>Sync records with Supabase. Manage database backups.</p>
+    </div>
+</div>
+{% endblock %}
