@@ -408,6 +408,60 @@ def change_password():
 
     return jsonify({"message": "Password changed successfully ✅"})
 
+@app.route("/student/dashboard_data")
+def dashboard_data():
+
+    email = session.get("user_email")
+
+    conn = config.get_connection()
+    cursor = conn.cursor()
+
+    # Get student_id
+    cursor.execute("SELECT id FROM users WHERE email=?", email)
+    student_id = cursor.fetchone()[0]
+
+    # 🔹 Marks
+    cursor.execute("""
+    SELECT subject, marks FROM marks WHERE student_id=?
+    """, student_id)
+
+    marks_data = cursor.fetchall()
+
+    subjects = [row[0] for row in marks_data]
+    marks = [row[1] for row in marks_data]
+
+    # 🔹 Attendance trend
+    cursor.execute("""
+    SELECT semester, attendance_percent 
+    FROM attendance WHERE student_id=? ORDER BY semester
+    """, student_id)
+
+    att_data = cursor.fetchall()
+
+    semesters = [f"Sem{row[0]}" for row in att_data]
+    attendance = [row[1] for row in att_data]
+
+    # 🔹 Avg attendance
+    avg_att = sum(attendance)/len(attendance) if attendance else 0
+
+    # 🔹 CGPA (simple logic)
+    cgpa = round(sum(marks)/len(marks)/10,2) if marks else 0
+
+    # 🔹 Performance label
+    performance = "Excellent" if cgpa >= 8 else "Good" if cgpa >= 6 else "Average"
+
+    conn.close()
+
+    return jsonify({
+        "subjects": subjects,
+        "marks": marks,
+        "semesters": semesters,
+        "attendance": attendance,
+        "avg_attendance": round(avg_att,2),
+        "cgpa": cgpa,
+        "performance": performance
+    })
+
 # ---------------- RUN ----------------
 if __name__ == "__main__":
     app.run(debug=True)
