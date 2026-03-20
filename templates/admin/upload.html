@@ -5,7 +5,6 @@
 {% block content %}
 
 <style>
-
 .upload-container{
 display:flex;
 gap:20px;
@@ -41,6 +40,9 @@ border-radius:4px;
 cursor:pointer;
 }
 
+button:hover{
+background:#16325c;
+}
 </style>
 
 <h2>Upload Student Data</h2>
@@ -48,43 +50,34 @@ cursor:pointer;
 <label>Select Academic Year</label>
 <select id="year">
 <option value="">Select Year</option>
-<option value="2024">2024</option>
-<option value="2025">2025</option>
-<option value="2026">2026</option>
+{% for y in years %}
+<option value="{{ y }}">{{ y }}</option>
+{% endfor %}
 </select>
+
+<br><br>
 
 <div class="upload-container">
 
-<!-- IT Upload -->
+<!-- IT -->
 <div class="upload-box">
 <h3>IT Students</h3>
-
 <input type="file" id="itFile" accept=".xlsx,.xls">
-
-<button onclick="uploadFile('IT')">Upload</button>
-
+<button type="button" onclick="uploadFile('IT')">Upload</button>
 </div>
 
-
-<!-- CSE Upload -->
+<!-- CSE -->
 <div class="upload-box">
 <h3>CSE Students</h3>
-
 <input type="file" id="cseFile" accept=".xlsx,.xls">
-
-<button onclick="uploadFile('CSE')">Upload</button>
-
+<button type="button" onclick="uploadFile('CSE')">Upload</button>
 </div>
 
-
-<!-- CE Upload -->
+<!-- CE -->
 <div class="upload-box">
 <h3>CE Students</h3>
-
 <input type="file" id="ceFile" accept=".xlsx,.xls">
-
-<button onclick="uploadFile('CE')">Upload</button>
-
+<button type="button" onclick="uploadFile('CE')">Upload</button>
 </div>
 
 </div>
@@ -92,9 +85,7 @@ cursor:pointer;
 <br>
 <div id="result"></div>
 
-
 <script>
-
 function uploadFile(dept){
 
 let year = document.getElementById("year").value;
@@ -109,13 +100,15 @@ let fileInput;
 if(dept === "IT"){
 fileInput = document.getElementById("itFile");
 }
-
-if(dept === "CSE"){
+else if(dept === "CSE"){
 fileInput = document.getElementById("cseFile");
 }
-
-if(dept === "CE"){
+else if(dept === "CE"){
 fileInput = document.getElementById("ceFile");
+}
+else{
+alert("Invalid department");
+return;
 }
 
 const file = fileInput.files[0];
@@ -125,24 +118,40 @@ alert("Please select Excel file");
 return;
 }
 
-const formData = new FormData();
+/* ✅ File type validation */
+if(!file.name.endsWith(".xlsx") && !file.name.endsWith(".xls")){
+alert("Only Excel files allowed");
+return;
+}
 
+const formData = new FormData();
 formData.append("file", file);
 formData.append("department", dept);
 formData.append("year", year);
 
-fetch("/upload_students_excel",{
+/* ✅ Show loading */
+document.getElementById("result").innerHTML = "<b style='color:blue'>Uploading...</b>";
+
+fetch("/admin/upload_students_excel",{
 method:"POST",
 body:formData
 })
-.then(res=>res.json())
-.then(data=>{
-document.getElementById("result").innerHTML =
-"<b style='color:green'>"+data.message+"</b>";
-})
-
+.then(res => {
+if(!res.ok){
+throw new Error("Server error");
 }
-
+return res.json();
+})
+.then(data => {
+document.getElementById("result").innerHTML =
+"<b style='color:green'>" + data.message + "</b>";
+})
+.catch(err => {
+console.error("Upload Error:", err);
+document.getElementById("result").innerHTML =
+"<b style='color:red'>Upload failed. Check console.</b>";
+});
+}
 </script>
 
 {% endblock %}
