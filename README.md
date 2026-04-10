@@ -23,6 +23,14 @@ A sophisticated, full-stack predictive academic tracking platform designed to br
 
 ---
 
+## 👥 Team Members
+- Manashvi Choksi
+- Princee Bhingradiya
+- Stuti Gondha
+- Krish Sabhaya
+
+---
+
 ## 🛠️ Technology Stack
 
 **Backend Architecture:**
