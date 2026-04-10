@@ -1,26 +1,147 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="dashboard-header">
-    <h1>Administrator Dashboard</h1>
-    <p>System Management Console</p>
-</div>
-
-<div class="dashboard-grid">
-    <div class="card">
-        <h3>Manage Users</h3>
-        <p>Generate accounts and random passwords for Students and Faculty. Distribute credentials securely.</p>
-        <button class="btn-primary" style="margin-top: 1rem;">Add New User</button>
+<div class="dashboard-header" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem; margin-bottom: 2rem;">
+    <div style="flex: 1;">
+        <h2 style="font-size: 2rem; margin-bottom: 0.5rem; color: #0f172a; font-weight: 800; letter-spacing: -0.025em;">Administrator Console</h2>
+        <p style="color: #64748b; font-size: 1.125rem;">Command center for institution metrics, performance analytics, and system operations.</p>
     </div>
-    
-    <div class="card">
-        <h3>System Analytics</h3>
-        <p>View institution-wide performance and career placement statistics.</p>
-    </div>
-
-    <div class="card">
-        <h3>Database Management</h3>
-        <p>Sync records with Supabase. Manage database backups.</p>
+    <div class="user-info">
+        <p style="font-weight: 600; color: var(--primary-color); background: #e0e7ff; padding: 0.5rem 1rem; border-radius: 2rem;">Admin ID: {{ user_id }}</p>
     </div>
 </div>
+
+<!-- KPI Summary Blocks -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+    <div class="card" style="padding: 1.5rem; text-align: left; border-left: 4px solid #3b82f6; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        <h4 style="color: #64748b; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Total Enrolled</h4>
+        <p style="font-size: 2.25rem; font-weight: 800; color: #0f172a;">{{ total_enrolled }}</p>
+    </div>
+    <div class="card" style="padding: 1.5rem; text-align: left; border-left: 4px solid #10b981; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        <h4 style="color: #64748b; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Active Faculty</h4>
+        <p style="font-size: 2.25rem; font-weight: 800; color: #0f172a;">{{ active_faculty }}</p>
+    </div>
+    <div class="card" style="padding: 1.5rem; text-align: left; border-left: 4px solid #f59e0b; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        <h4 style="color: #64748b; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Departments Active</h4>
+        <p style="font-size: 2.25rem; font-weight: 800; color: #0f172a;">{{ departments_active }}</p>
+    </div>
+    <div class="card" style="padding: 1.5rem; text-align: left; border-left: 4px solid #8b5cf6; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        <h4 style="color: #64748b; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Institution Avg CGPA</h4>
+        <p style="font-size: 2.25rem; font-weight: 800; color: #0f172a;">{{ institution_avg_cgpa }}</p>
+    </div>
+</div>
+
+<div class="dashboard-grid" style="grid-template-columns: repeat(2, 1fr); gap: 2rem;">
+    <!-- Chart: Performance -->
+    <div class="card" style="grid-column: span 1; padding: 2rem;">
+        <h3 style="margin-bottom: 0.5rem; color: #1e293b; font-size: 1.25rem;">Institution-Wide Performance</h3>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Average CGPA distribution mapped across all primary departments within the university logic ecosystem.</p>
+        <div style="position: relative; height:320px; width:100%">
+            <canvas id="adminPerformanceChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Chart: Predictions -->
+    <div class="card" style="grid-column: span 1; padding: 2rem;">
+        <h3 style="margin-bottom: 0.5rem; color: #1e293b; font-size: 1.25rem;">Global Career Predictions</h3>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">AI-Driven placement predictions modeling where the current active institution demographics fall.</p>
+        <div style="position: relative; height:320px; width:100%">
+            <canvas id="adminPredictionChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Operations Panel -->
+    <div class="card" style="grid-column: span 1; padding: 2rem; background: #f8fafc; border: 1px solid #e2e8f0;">
+        <h3 style="margin-bottom: 0.5rem; color: #1e293b; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="ph ph-gear"></i> System Operations
+        </h3>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Critical execution tools for backend management and access distribution.</p>
+        
+        <div style="display: flex; gap: 1rem; align-items: stretch;">
+            <!-- Manage Users -->
+            <div style="flex: 1; border: 1px solid #cbd5e1; border-radius: 0.75rem; padding: 1.5rem; background: white; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                <div style="width: 40px; height: 40px; background: #e0e7ff; color: #4338ca; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto; font-size: 1.25rem;"><i class="ph ph-users"></i></div>
+                <h4 style="color: #0f172a; margin-bottom: 0.5rem;">User Management</h4>
+                <p style="font-size: 0.75rem; color: #64748b; margin-bottom: 1.5rem; line-height: 1.4;">Generate and distribute accounts for Faculty & Students.</p>
+                <a href="{{ url_for('admin_users') }}" class="btn-primary" style="display: block; text-decoration: none; width: 100%; border-radius: 9999px; box-sizing: border-box; text-align: center;">Manage Access</a>
+            </div>
+            
+            <!-- Annual Updates -->
+            <div style="flex: 1; border: 1px solid #cbd5e1; border-radius: 0.75rem; padding: 1.5rem; background: white; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                <div style="width: 40px; height: 40px; background: #dcfce7; color: #15803d; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto; font-size: 1.25rem;"><i class="ph ph-calendar"></i></div>
+                <h4 style="color: #0f172a; margin-bottom: 0.5rem;">Academic Year</h4>
+                <p style="font-size: 0.75rem; color: #64748b; margin-bottom: 1.5rem; line-height: 1.4;">Automated structured cohort progression tracking SGPA passing constraints.</p>
+                <a href="{{ url_for('admin_rollout') }}" class="btn-primary" style="display: block; width: 100%; border-radius: 9999px; background-color: #0d9488; border: transparent; box-shadow: 0 4px 6px rgba(13, 148, 136, 0.25); text-decoration: none; padding: 0.75rem; box-sizing: border-box; text-align: center;">Execute Rollout Engine</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Department Roster Navigator -->
+    <div class="card" style="grid-column: span 1; padding: 2rem;">
+        <h3 style="margin-bottom: 0.5rem; color: #1e293b; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="ph ph-chart-bar"></i> Department Directories
+        </h3>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Browse specific rosters to evaluate sub-level performance metrics isolated by major.</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+            {% for dept in departments %}
+                <a href="{{ url_for('view_department', dept_name=dept) }}" class="btn-primary" style="background: white; border: 2px solid #e2e8f0; color: #334155; text-decoration: none; padding: 1rem; text-align: center; border-radius: 0.75rem; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05rem;">
+                    {{ dept }} →
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Institution-Wide Performance Chart (Bar)
+    const perfCtx = document.getElementById('adminPerformanceChart').getContext('2d');
+    new Chart(perfCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ dept_names | safe }},
+            datasets: [{
+                label: 'Average CGPA',
+                data: {{ dept_avg_cgpas | safe }},
+                backgroundColor: 'rgba(56, 189, 248, 0.7)',
+                borderColor: 'rgba(14, 165, 233, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: false, min: 5, max: 10 }
+            }
+        }
+    });
+
+    // Overall Career Predictions Chart (Doughnut)
+    const predCtx = document.getElementById('adminPredictionChart').getContext('2d');
+    new Chart(predCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ pred_labels | safe }},
+            datasets: [{
+                data: {{ pred_data | safe }},
+                backgroundColor: [
+                    '#4f46e5',
+                    '#06b6d4',
+                    '#10b981',
+                    '#f59e0b',
+                    '#ef4444'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'right' }
+            }
+        }
+    });
+</script>
 {% endblock %}

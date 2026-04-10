@@ -5,14 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Performance & Career Tracker</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+        function updateThemeIcon(theme) {
+            document.querySelectorAll('.theme-toggle i').forEach(icon => {
+                icon.className = theme === 'dark' ? 'ph ph-sun' : 'ph ph-moon';
+            });
+        }
+        // Initialize Theme Setting explicitly on load to prevent flashes
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        window.addEventListener('DOMContentLoaded', () => updateThemeIcon(savedTheme));
+    </script>
 </head>
 <body>
     <nav class="navbar">
-        <div class="nav-brand">EduTrack Analytics</div>
+        <a href="{{ url_for('index') }}" class="nav-brand" style="text-decoration: none;">
+            <span style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: var(--primary-color); color: white; border-radius: 50%; font-size: 1.25rem;">E</span>
+            EduTrack Analytics
+        </a>
         <div class="nav-links">
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Dark Mode" title="Toggle Theme" style="margin-right: 1.5rem;">
+                <i class="ph ph-moon"></i>
+            </button>
             {% if session.get('user_id') %}
-                <span class="user-badge">Logged in as: {{ session.get('user_id') }} ({{ session.get('user_role')|title }})</span>
+                <span class="user-badge" style="margin-right: 1rem;">Logged in as: {{ session.get('user_id') }} ({{ session.get('user_role')|title }})</span>
+                
+                <a href="{{ url_for('profile') }}" style="text-decoration: none; font-weight: 500; color: var(--text-main); margin-right: 1rem;">Profile</a>
+
+                {% if session.get('user_role') == 'student' %}
+                    <a href="{{ url_for('student_dashboard') }}" style="text-decoration: none; font-weight: 500; color: var(--text-main); margin-right: 1rem;">Dashboard</a>
+                {% elif session.get('user_role') == 'faculty' %}
+                    <a href="{{ url_for('faculty_dashboard') }}" style="text-decoration: none; font-weight: 500; color: var(--text-main); margin-right: 1rem;">Dashboard</a>
+                {% elif session.get('user_role') == 'admin' %}
+                    <a href="{{ url_for('admin_dashboard') }}" style="text-decoration: none; font-weight: 500; color: var(--text-main); margin-right: 1rem;">Dashboard</a>
+                {% endif %}
+
                 <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
             {% endif %}
         </div>

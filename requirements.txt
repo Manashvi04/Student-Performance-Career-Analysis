@@ -1,3 +1,7 @@
 Flask
 supabase
 python-dotenv
+pandas
+numpy
+scikit-learn
+joblib

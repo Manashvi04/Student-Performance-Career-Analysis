@@ -1,25 +1,205 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="dashboard-header">
-    <h1>Student Dashboard</h1>
-    <p>Welcome, {{ user_id }}. Here is your performance overview.</p>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="dashboard-header" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem; margin-bottom: 2rem;">
+    <div style="flex: 1;">
+        <h2 style="font-size: 2rem; margin-bottom: 0.5rem; color: #0f172a; font-weight: 800; letter-spacing: -0.025em;">Student Portal</h2>
+        <p style="color: #64748b; font-size: 1.125rem;">Live academic tracking, skill assessments, and AI-driven career predictions.</p>
+    </div>
+    <div class="user-info">
+        <p style="font-weight: 600; color: var(--primary-color); background: #e0e7ff; padding: 0.5rem 1rem; border-radius: 2rem;">ID: {{ user_id }}</p>
+    </div>
 </div>
 
-<div class="dashboard-grid">
-    <div class="card">
-        <h3>Academic Performance</h3>
-        <p>Your current CGPA and course-wise grades will appear here.</p>
+<!-- KPI Summary Blocks -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+    <div class="card" style="padding: 1.5rem; text-align: left; border-left: 4px solid #3b82f6; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        <h4 style="color: #64748b; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Current CGPA</h4>
+        <p style="font-size: 2.25rem; font-weight: 800; color: #0f172a;">{{ cgpa }}</p>
     </div>
-    
-    <div class="card">
-        <h3>Skill Assessment</h3>
-        <p>View your technical and soft skills evaluations provided by faculties.</p>
+    <div class="card" style="padding: 1.5rem; text-align: left; border-left: 4px solid #10b981; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        <h4 style="color: #64748b; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Co-Curricular Score</h4>
+        <p style="font-size: 2.25rem; font-weight: 800; color: #0f172a;">{{ co_curricular_score }}</p>
     </div>
-
-    <div class="card">
-        <h3>Career Trajectory Analysis</h3>
-        <p>Predicted career paths, job fit, and suggested courses based on your current profile.</p>
+    <div class="card" style="padding: 1.5rem; text-align: left; border-left: 4px solid #f59e0b; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        <h4 style="color: #64748b; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Extra-Curricular Score</h4>
+        <p style="font-size: 2.25rem; font-weight: 800; color: #0f172a;">{{ extra_curricular_score }}</p>
+    </div>
+    <div class="card" style="padding: 1.5rem; text-align: left; border-left: 4px solid #8b5cf6; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        <h4 style="color: #64748b; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Predicted Trajectory</h4>
+        <p style="font-size: 1.7rem; font-weight: 800; color: #0f172a; margin-top: 0.55rem; line-height: 1;">{{ predictions[0].career }}</p>
     </div>
 </div>
+
+<div class="dashboard-grid" style="grid-template-columns: repeat(3, 1fr); gap: 2rem;">
+    <!-- GPA Chart -->
+    <div class="card" style="grid-column: span 2; padding: 2rem;">
+        <h3 style="margin-bottom: 0.5rem; color: #1e293b; font-size: 1.25rem;">Academic Performance Trend</h3>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Semester over semester trajectory of your GPA metrics.</p>
+        <div style="position: relative; height:320px; width:100%">
+            <canvas id="gpaChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Skill Assessment Radar -->
+    <div class="card" style="grid-column: span 1; padding: 2rem;">
+        <h3 style="margin-bottom: 0.5rem; color: #1e293b; font-size: 1.25rem;">Skill Assessment Grid</h3>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Quantifiable metrics covering core competencies.</p>
+        <div style="position: relative; height:320px; width:100%">
+            <canvas id="skillChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Subjects Analysis & Upload (Split columns) -->
+    <div class="card" style="grid-column: span 2; padding: 2rem;">
+        <h3 style="margin-bottom: 0.5rem; color: #1e293b; font-size: 1.25rem;">Subject Proficiency Extraction</h3>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Algorithmic separation of courses graded relative to the median.</p>
+        
+        <div style="display: flex; gap: 2rem;">
+            <!-- Strong -->
+            <div style="flex: 1;">
+                <h4 style="color: #059669; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; border-bottom: 2px solid #34d399; padding-bottom: 0.5rem;">
+                    <span style="font-size: 1.25rem;">↑</span> Strong Nodes
+                </h4>
+                {% if strong_subjects %}
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    {% for subject in strong_subjects %}
+                        <div style="background: #ecfdf5; color: #065f46; padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 500; font-size: 0.875rem; display: flex; justify-content: space-between; align-items: center;">
+                            <span>{{ subject }}</span>
+                            <span style="background: white; padding: 0.25rem 0.5rem; border-radius: 9999px; font-weight: 700;">{{ subject_marks[subject] }}</span>
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% else %}
+                    <p style="color: var(--text-muted); font-size: 0.875rem;">None identified yet.</p>
+                {% endif %}
+            </div>
+
+            <!-- Weak -->
+            <div style="flex: 1;">
+                <h4 style="color: #dc2626; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; border-bottom: 2px solid #f87171; padding-bottom: 0.5rem;">
+                    <span style="font-size: 1.25rem;">↓</span> Improvement Zones
+                </h4>
+                {% if weak_subjects %}
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    {% for subject in weak_subjects %}
+                        <div style="background: #fef2f2; color: #991b1b; padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 500; font-size: 0.875rem; display: flex; justify-content: space-between; align-items: center;">
+                            <span>{{ subject }}</span>
+                            <span style="background: white; padding: 0.25rem 0.5rem; border-radius: 9999px; font-weight: 700;">{{ subject_marks[subject] }}</span>
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% else %}
+                    <p style="color: var(--text-muted); font-size: 0.875rem;">None identified yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Panel -->
+    <div class="card" style="grid-column: span 1; padding: 2rem; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
+        <h3 style="margin-bottom: 0.5rem; color: #1e293b; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;"><i class="ph ph-medal" style="font-size: 1.5rem;"></i> Upload Activities</h3>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Submit certificates for co-curricular points padding.</p>
+        <form action="{{ url_for('upload_activities') }}" method="POST" enctype="multipart/form-data" style="margin-top: auto; border: 2px dashed #cbd5e1; padding: 1.5rem; border-radius: 0.75rem; background: white;">
+            <div class="form-group" style="margin-bottom: 0.75rem;">
+                <select name="activity_category" required style="padding: 0.5rem; width: 100%; border-radius: 0.5rem; background: #f1f5f9; border: none;">
+                    <option value="" disabled selected>-- Select Auto-Scored Achievement --</option>
+                    <optgroup label="Co-Curricular (Technical)">
+                        <option value="co_curricular|5.0|Hackathon Participation">Hackathon Participation (+5 Pts)</option>
+                        <option value="co_curricular|10.0|Hackathon Winner">Hackathon Winner (+10 Pts)</option>
+                        <option value="co_curricular|15.0|Paper Published">Research Paper Published (+15 Pts)</option>
+                        <option value="co_curricular|8.0|Certification Validation">Industry Certification (+8 Pts)</option>
+                    </optgroup>
+                    <optgroup label="Extra-Curricular (Non-Technical)">
+                        <option value="extra_curricular|5.0|Sports Inter-College">Sports Inter-College (+5 Pts)</option>
+                        <option value="extra_curricular|10.0|Sports National/State">Sports National/State (+10 Pts)</option>
+                        <option value="extra_curricular|8.0|Cultural/Arts Winner">Cultural/Arts Winner (+8 Pts)</option>
+                        <option value="extra_curricular|5.0|Social Work Volunteering">Social/Volunteer Work (+5 Pts)</option>
+                    </optgroup>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 0.75rem;">
+                <textarea name="description" rows="2" placeholder="Describe the activity..." required style="width: 100%; background: #f1f5f9; border: none; border-radius: 0.5rem; padding: 0.5rem; resize: none; font-size: 0.875rem;"></textarea>
+            </div>
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <input type="file" name="certificate" accept=".pdf,image/*" required style="width: 100%; font-size: 0.75rem;">
+            </div>
+            <button type="submit" class="btn-primary" style="padding: 0.75rem; font-size: 0.875rem; width: 100%; border-radius: 9999px;">Submit Proof</button>
+        </form>
+    </div>
+
+    <!-- Predictions Banner -->
+    <div class="card" style="grid-column: span 3; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; padding: 2.5rem; margin-top: 1rem;">
+        <h3 style="color: #60a5fa; font-size: 1.5rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem;">
+            <span><i class="ph ph-robot" style="font-size: 1.75rem;"></i></span> AI Career Trajectory Engine
+        </h3>
+        <p style="margin-bottom: 2rem; color: #94a3b8; max-width: 800px; line-height: 1.6;">Based on an aggregation of your CGPA, uploaded Curricular Activities, and explicit skill trees, the internal Random Forest model predicts the highest probability career funnels you align with.</p>
+        
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+            {% for pred in predictions %}
+            <div style="flex: 1; min-width: 200px; padding: 1.5rem; background: rgba(255,255,255,0.05); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
+                <h4 style="font-size: 1.125rem; color: white; margin-bottom: 0.75rem;">{{ pred.career }}</h4>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="flex: 1; background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden;">
+                        <div style="background: #34d399; width: {{ pred.confidence }}%; height: 100%; border-radius: 4px; box-shadow: 0 0 10px rgba(52, 211, 153, 0.5);"></div>
+                    </div>
+                    <span style="font-weight: 700; color: #34d399; font-size: 0.875rem;">{{ pred.confidence }}%</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // GPA Chart
+    const ctxGpa = document.getElementById('gpaChart').getContext('2d');
+    new Chart(ctxGpa, {
+        type: 'line',
+        data: {
+            labels: {{ semesters|tojson }},
+            datasets: [{
+                label: 'GPA',
+                data: {{ gpa_trend|tojson }},
+                borderColor: '#4f46e5',
+                backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { min: 0, max: 10 }
+            }
+        }
+    });
+
+    // Skill Radar Chart
+    const ctxSkill = document.getElementById('skillChart').getContext('2d');
+    new Chart(ctxSkill, {
+        type: 'radar',
+        data: {
+            labels: {{ skills|tojson }},
+            datasets: [{
+                label: 'Skill Score',
+                data: {{ skill_scores|tojson }},
+                backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                borderColor: '#10b981',
+                pointBackgroundColor: '#10b981'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: { min: 0, max: 100, ticks: { stepSize: 20 } }
+            }
+        }
+    });
+</script>
 {% endblock %}

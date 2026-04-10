@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="dashboard-header" style="margin-bottom: 2rem;">
+    <h1 style="font-size: 2rem; color: #1e293b; font-weight: 800; display: flex; align-items: center; gap: 0.75rem;">
+        <span style="background: var(--primary-color); color: white; padding: 0.5rem; border-radius: 0.5rem;">⚙️</span>
+        Semester Rollout Engine
+    </h1>
+    <p style="color: var(--text-muted); font-size: 1.1rem;">Automated batch processing for academic promotion & retention based on CGPA constraints.</p>
+</div>
+
+<div class="card" style="margin-bottom: 2rem; padding: 2.5rem; border-left: 6px solid var(--primary-color);">
+    <h3 style="font-size: 1.5rem; color: #0f172a; margin-bottom: 1rem;">Execute Academic Rollout</h3>
+    <p style="color: #475569; margin-bottom: 1.5rem; font-size: 1rem; line-height: 1.7;">
+        The Rollout Engine sweeps through the entire student database, identifying the highest logged active semester for each student. 
+        It evaluates their Semester GPA (SGPA). If the SGPA mathematically clears the minimum passing threshold (<strong>&ge; 5.0</strong>), 
+        the student is officially promoted and their <code>current_semester</code> state is incremented. Otherwise, they are marked as 
+        <strong>FAILED</strong> and retain their current status to repeat the semester block.
+    </p>
+
+    <form method="POST" action="{{ url_for('admin_rollout') }}" onsubmit="return confirm('WARNING: Are you absolutely sure you want to trigger a batch academic rollout? This will permanently mutate student progression states across all departments.');">
+        <button type="submit" class="btn-primary" style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 1rem 2rem; font-size: 1.1rem; border-radius: 0.75rem; background-color: var(--primary-color);">
+            <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            Commence Automated Batch Rollout >>
+        </button>
+    </form>
+</div>
+
+{% if results %}
+<div class="card" style="padding: 2rem; overflow: hidden; align-self: start;">
+    <h3 style="margin-bottom: 0.5rem; color: #1e293b; font-size: 1.25rem;">Rollout Operation Log</h3>
+    <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Results of the most recent batch progression query.</p>
+    
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; text-align: left; border-collapse: collapse; min-width: 600px;">
+            <thead>
+                <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b; font-size: 0.875rem;">
+                    <th style="padding: 0.75rem 0.5rem;">Student Topology (ID / Name)</th>
+                    <th style="padding: 0.75rem 0.5rem; text-align: center;">Evaluated Sem</th>
+                    <th style="padding: 0.75rem 0.5rem; text-align: center;">Computed SGPA</th>
+                    <th style="padding: 0.75rem 0.5rem; text-align: center;">Status Trigger</th>
+                    <th style="padding: 0.75rem 0.5rem; text-align: center;">Target Sem (Post-Rollout)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in results %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 1.25rem 0.5rem;">
+                        <span style="font-family: monospace; font-weight: 700; color: #0f172a;">{{ r.id }}</span><br>
+                        <span style="color: #64748b; font-size: 0.875rem;">{{ r.name }}</span>
+                    </td>
+                    <td style="padding: 1.25rem 0.5rem; text-align: center; color: #475569;">Semester {{ r.evaluated_sem }}</td>
+                    <td style="padding: 1.25rem 0.5rem; text-align: center; font-weight: 700; color: #334155;">{{ r.sgpa }}</td>
+                    <td style="padding: 1.25rem 0.5rem; text-align: center;">
+                        {% if r.status == 'PROMOTED' %}
+                            <span style="background: #ccfbf1; color: #0f766e; padding: 0.35rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.05em;">PROMOTED</span>
+                        {% elif r.status == 'FAILED' %}
+                            <span style="background: #fee2e2; color: #b91c1c; padding: 0.35rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.05em;">FAILED & RETAINED</span>
+                        {% else %}
+                            <span style="background: #f1f5f9; color: #64748b; padding: 0.35rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.05em;">HELD (NO DATA)</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 1.25rem 0.5rem; text-align: center; font-weight: 800; color: {% if r.status == 'PROMOTED' %}var(--primary-color){% else %}#94a3b8{% endif %};">
+                        Semester {{ r.next_sem }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

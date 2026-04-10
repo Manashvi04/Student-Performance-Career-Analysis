@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-header" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem; margin-bottom: 2rem;">
+    <div style="flex: 1;">
+        <h2 style="font-size: 2rem; margin-bottom: 0.5rem; color: #0f172a; font-weight: 800; letter-spacing: -0.025em;">User Management</h2>
+        <p style="color: #64748b; font-size: 1.125rem;">Provisioning and monitoring of all system accounts.</p>
+    </div>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn-primary" style="text-decoration: none;">← Back to Console</a>
+</div>
+
+<div class="dashboard-grid" style="grid-template-columns: repeat(3, 1fr); gap: 2rem;">
+    
+    <div style="grid-column: span 1; display: flex; flex-direction: column; gap: 2rem;">
+        
+        <!-- Batch Upload Users Panel -->
+        <div class="card" style="padding: 2rem; background: #fffbeb; border: 1px solid #fde68a;">
+            <h3 style="margin-bottom: 0.5rem; color: #92400e; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;"><i class="ph ph-folder-arrow-down" style="font-size: 1.5rem;"></i> Batch Import</h3>
+            <div style="background: white; padding: 0.75rem; border-radius: 0.5rem; border: 1px dashed #fcd34d; font-family: monospace; font-size: 0.75rem; margin-bottom: 1rem; color: #92400e; word-wrap: break-word;">
+                Required columns:<br>id, name, email<br>
+                <i style="color: #d97706;">(Optional: password, role, department. File data overrides batch settings below if provided.)</i>
+            </div>
+            <form action="{{ url_for('admin_bulk_users') }}" method="POST" enctype="multipart/form-data">
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label style="font-size: 0.875rem; font-weight: 600; color: #92400e; margin-bottom: 0.25rem; display: block;">Apply Batch Role</label>
+                    <select name="batch_role" id="batchRoleSelect" required style="width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #fcd34d; box-sizing: border-box; background: white;">
+                        <option value="student">Student</option>
+                        <option value="faculty">Faculty</option>
+                    </select>
+                </div>
+                <div id="batchDeptGroup" style="margin-bottom: 0.75rem;">
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <label style="font-size: 0.875rem; font-weight: 600; color: #92400e; margin-bottom: 0.25rem; display: block;">Apply Batch Department</label>
+                        <select name="batch_department" style="width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #fcd34d; box-sizing: border-box; background: white;">
+                            <option value="IT">Information Technology (IT)</option>
+                            <option value="CE">Computer Engineering (CE)</option>
+                            <option value="CS">Computer Science (CS)</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <div class="form-group" style="flex: 1;">
+                            <label style="font-size: 0.875rem; font-weight: 600; color: #92400e; margin-bottom: 0.25rem; display: block;">Batch Year</label>
+                            <input type="number" name="batch_year" value="1" min="1" max="4" style="width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #fcd34d; box-sizing: border-box;">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label style="font-size: 0.875rem; font-weight: 600; color: #92400e; margin-bottom: 0.25rem; display: block;">Batch Semester</label>
+                            <input type="number" name="batch_semester" value="1" min="1" max="8" style="width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #fcd34d; box-sizing: border-box;">
+                        </div>
+                    </div>
+                </div>
+                <input type="file" name="users_file" accept=".csv, .xlsx" required style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border-radius: 0.5rem; border: 1px solid #fcd34d; background: white;">
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 0.75rem; background-color: #f59e0b; border: none; font-weight: 600;">Import Records</button>
+            </form>
+        </div>
+
+        <!-- Register New User Panel -->
+        <div class="card" style="padding: 2rem; background: #f8fafc; border: 1px solid #e2e8f0;">
+            <h3 style="margin-bottom: 0.5rem; color: #1e293b; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="ph ph-user-plus" style="font-size: 1.5rem;"></i> Single Provision
+            </h3>
+            <form action="{{ url_for('admin_users') }}" method="POST" style="margin-top: 1rem;">
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label style="font-size: 0.875rem; font-weight: 600; color: #334155; margin-bottom: 0.25rem; display: block;">Login ID Number*</label>
+                    <input type="text" name="user_id" required placeholder="e.g. STU124" style="width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #cbd5e1; box-sizing: border-box;">
+                </div>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label style="font-size: 0.875rem; font-weight: 600; color: #334155; margin-bottom: 0.25rem; display: block;">Assigned Password</label>
+                    <input type="text" name="password" placeholder="Leave blank to auto-generate" style="width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #cbd5e1; box-sizing: border-box;">
+                </div>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label style="font-size: 0.875rem; font-weight: 600; color: #334155; margin-bottom: 0.25rem; display: block;">System Role*</label>
+                    <select name="role" id="roleSelect" required style="width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #cbd5e1; box-sizing: border-box; background: white;">
+                        <option value="student">Student</option>
+                        <option value="faculty">Faculty</option>
+                        <option value="admin">Administrator</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label style="font-size: 0.875rem; font-weight: 600; color: #334155; margin-bottom: 0.25rem; display: block;">Target Full Name*</label>
+                    <input type="text" name="name" required placeholder="John Doe" style="width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #cbd5e1; box-sizing: border-box;">
+                </div>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label style="font-size: 0.875rem; font-weight: 600; color: #334155; margin-bottom: 0.25rem; display: block;">Institutional Email*</label>
+                    <input type="email" name="email" required placeholder="john@college.edu" style="width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #cbd5e1; box-sizing: border-box;">
+                </div>
+                <div id="studentFields" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #cbd5e1; display: block;">
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <label style="font-size: 0.875rem; font-weight: 600; color: #334155; margin-bottom: 0.25rem; display: block;">Initial Department (Student Only)</label>
+                        <select name="department" style="width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #cbd5e1; box-sizing: border-box; background: white;">
+                            <option value="IT">Information Technology (IT)</option>
+                            <option value="CE">Computer Engineering (CE)</option>
+                            <option value="CS">Computer Science (CS)</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 1rem; width: 100%; padding: 0.75rem; border-radius: 0.5rem; font-weight: 600;">Execute Provision</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Active User Roster -->
+    <div class="card" style="grid-column: span 2; padding: 2rem; overflow: hidden; align-self: start;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h3 style="margin-bottom: 0.5rem; color: #1e293b; font-size: 1.25rem;">Active Accounts Directory</h3>
+                <p style="color: var(--text-muted); font-size: 0.875rem;">Live view of all authenticated identities registered on the domain. Categorized for structural clarity.</p>
+            </div>
+            
+            <!-- Modern Pill Toggles -->
+            <div style="display: flex; background: #f1f5f9; padding: 0.35rem; border-radius: 9999px; gap: 0.25rem;">
+                <button onclick="switchTab('all')" id="tab-all" style="padding: 0.5rem 1rem; border-radius: 9999px; border: none; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; background: var(--primary-color); color: white;">All Identities</button>
+                <button onclick="switchTab('student')" id="tab-student" style="padding: 0.5rem 1rem; border-radius: 9999px; border: none; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: #475569;">Students</button>
+                <button onclick="switchTab('faculty')" id="tab-faculty" style="padding: 0.5rem 1rem; border-radius: 9999px; border: none; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: #475569;">Faculty</button>
+                <button onclick="switchTab('admin')" id="tab-admin" style="padding: 0.5rem 1rem; border-radius: 9999px; border: none; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: #475569;">Admins</button>
+            </div>
+        </div>
+        
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; text-align: left; border-collapse: collapse; min-width: 500px;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b; font-size: 0.875rem;">
+                        <th style="padding: 0.75rem 0.5rem;">ID Tag / Name</th>
+                        <th style="padding: 0.75rem 0.5rem;">Access Password</th>
+                        <th style="padding: 0.75rem 0.5rem;">Role Class</th>
+                        <th style="padding: 0.75rem 0.5rem;">Email Vector</th>
+                        <th style="padding: 0.75rem 0.5rem;">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="user-table-body">
+                    {% for user in users %}
+                    <tr class="user-row" data-role="{{ user.role }}" style="border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+                        <td style="padding: 1rem 0.5rem;">
+                            <span style="font-family: monospace; font-weight: 700; color: #0f172a;">{{ user.id }}</span><br>
+                            <span style="color: #64748b; font-size: 0.875rem;">{{ user.name }}</span>
+                        </td>
+                        <td style="padding: 1rem 0.5rem;">
+                            <span style="font-family: monospace; background: #f1f5f9; padding: 0.25rem 0.5rem; border-radius: 0.25rem; border: 1px solid #e2e8f0; color: #475569; font-size: 0.875rem;">
+                                {{ user.password }}
+                            </span>
+                        </td>
+                        <td style="padding: 1rem 0.5rem;">
+                            <span style="background: 
+                                {% if user.role == 'admin' %}#fee2e2{% elif user.role == 'faculty' %}#ccfbf1{% else %}#e0e7ff{% endif %}; 
+                                color: {% if user.role == 'admin' %}#991b1b{% elif user.role == 'faculty' %}#0f766e{% else %}#3730a3{% endif %}; 
+                                padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; display: inline-block;">
+                                {{ user.role }}
+                            </span>
+                        </td>
+                        <td style="padding: 1rem 0.5rem; color: #334155; font-size: 0.875rem;">{{ user.email }}</td>
+                        <td style="padding: 1rem 0.5rem;">
+                            {% if user.id != session.get('user_id') %}
+                            <form action="{{ url_for('admin_delete_user', delete_id=user.id) }}" method="POST" style="margin: 0;" onsubmit="return confirm('WARNING: Are you sure you want to permanently delete user {{ user.id }}? This cascades to all their data.');">
+                                <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; text-decoration: underline; font-size: 0.875rem; font-weight: 600; padding: 0;">Revoke</button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not users %}
+                    <tr id="empty-row"><td colspan="5" style="padding: 2rem; text-align: center; color: #94a3b8;">No records found.</td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchTab(role) {
+        // Reset all buttons
+        const tabs = ['all', 'student', 'faculty', 'admin'];
+        tabs.forEach(t => {
+            const btn = document.getElementById('tab-' + t);
+            if(btn) {
+                btn.style.background = 'transparent';
+                btn.style.color = '#475569';
+            }
+        });
+        
+        // Highlight active
+        const activeBtn = document.getElementById('tab-' + role);
+        if(activeBtn) {
+            activeBtn.style.background = 'var(--primary-color)';
+            activeBtn.style.color = 'white';
+        }
+
+        // Filter rows
+        const rows = document.querySelectorAll('.user-row');
+        let visibleCount = 0;
+        rows.forEach(r => {
+            if (role === 'all' || r.getAttribute('data-role') === role) {
+                r.style.display = '';
+                visibleCount++;
+            } else {
+                r.style.display = 'none';
+            }
+        });
+        
+        // Handle empty states dynamically
+        let emptyRow = document.getElementById('empty-row');
+        if (!emptyRow && visibleCount === 0) {
+            emptyRow = document.createElement('tr');
+            emptyRow.id = 'empty-row';
+            emptyRow.innerHTML = '<td colspan="5" style="padding: 2rem; text-align: center; color: #94a3b8;">No records found matching this filter.</td>';
+            document.getElementById('user-table-body').appendChild(emptyRow);
+        } else if (emptyRow && visibleCount > 0) {
+            emptyRow.remove();
+        } else if (emptyRow) {
+            emptyRow.innerHTML = '<td colspan="5" style="padding: 2rem; text-align: center; color: #94a3b8;">No records found matching this filter.</td>';
+            emptyRow.style.display = visibleCount === 0 ? '' : 'none';
+        }
+    }
+
+    const roleSelect = document.getElementById('roleSelect');
+    const studentFields = document.getElementById('studentFields');
+    roleSelect.addEventListener('change', (e) => {
+        if(e.target.value === 'student') {
+            studentFields.style.display = 'block';
+        } else {
+            studentFields.style.display = 'none';
+        }
+    });
+
+    const batchRoleSelect = document.getElementById('batchRoleSelect');
+    const batchDeptGroup = document.getElementById('batchDeptGroup');
+    if (batchRoleSelect) {
+        batchRoleSelect.addEventListener('change', (e) => {
+            if (e.target.value === 'student') {
+                batchDeptGroup.style.display = 'block';
+            } else {
+                batchDeptGroup.style.display = 'none';
+            }
+        });
+    }
+</script>
+{% endblock %}

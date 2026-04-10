@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHARUSAT | Student Performance System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --secondary: #475569;
+            --bg-light: #f8fafc;
+            --text-dark: #334155;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(rgba(30, 41, 59, 0.85), rgba(30, 41, 59, 0.95)), url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
+            padding: 2rem;
+            color: white;
+        }
+
+        .nav {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            animation: fadeInUp 1s ease-out;
+            margin-top: 4rem;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: #cbd5e1;
+            margin-bottom: 3rem;
+            line-height: 1.8;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 10px 25px -5px rgba(13, 148, 136, 0.3);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -5px rgba(13, 148, 136, 0.35);
+        }
+
+        /* Charusat Info Section */
+        .university-info {
+            padding: 6rem 2rem;
+            background: white;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .section-tag {
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .info-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #0f172a;
+            line-height: 1.2;
+        }
+
+        .info-content p {
+            color: #475569;
+            line-height: 1.8;
+            font-size: 1.125rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .vision-mission-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .vm-card {
+            background: #ffffff;
+            padding: 2.5rem;
+            border-radius: 2.5rem;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05);
+        }
+
+        .vm-card h3 {
+            margin-top: 0;
+            color: #0f172a;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .vm-card p {
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+
+        /* Performance System Details Section */
+        .system-details {
+            padding: 5rem 2rem;
+            background: #f1f5f9;
+            text-align: center;
+        }
+
+        .system-details-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .system-details h2 {
+            font-size: 2.5rem;
+            color: #0f172a;
+            margin-bottom: 1.5rem;
+        }
+
+        .system-details p {
+            color: #475569;
+            font-size: 1.125rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .feature-item {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 2.5rem;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .feature-item h4 {
+            font-size: 1.25rem;
+            color: #0f172a;
+            margin-bottom: 0.75rem;
+            margin-top: 0;
+        }
+
+        .feature-item p {
+            font-size: 0.95rem;
+            margin-bottom: 0;
+        }
+
+        /* Footer */
+        .footer {
+            background: #0f172a;
+            padding: 3rem 2rem;
+            text-align: center;
+            color: #64748b;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .vision-mission-cards,
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav {
+                padding: 1rem;
+            }
+        }
+
+        /* Theme Toggle UI for Index */
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background 0.2s, color 0.2s;
+            margin-right: 1.5rem;
+        }
+        .theme-toggle:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Dark Mode Overrides for Index */
+        html[data-theme="dark"] body {
+            background-color: #0f172a !important;
+            color: #f8fafc !important;
+        }
+        html[data-theme="dark"] .university-info, html[data-theme="dark"] .system-details {
+            background: #0f172a !important;
+        }
+        html[data-theme="dark"] .vm-card, html[data-theme="dark"] .feature-item {
+            background-color: #1e293b !important;
+            border-color: #334155 !important;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5) !important;
+        }
+        html[data-theme="dark"] h1, html[data-theme="dark"] h2, html[data-theme="dark"] h3, html[data-theme="dark"] h4 {
+            color: #f8fafc !important;
+        }
+        html[data-theme="dark"] p {
+            color: #cbd5e1 !important;
+        }
+    </style>
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+        function updateThemeIcon(theme) {
+            document.querySelectorAll('.theme-toggle i').forEach(icon => {
+                icon.className = theme === 'dark' ? 'ph ph-sun' : 'ph ph-moon';
+            });
+            // Update button styles in hero
+            const toggleBtn = document.querySelector('.theme-toggle');
+            if (toggleBtn) {
+                if (theme === 'light') {
+                    toggleBtn.style.color = '#333';
+                    toggleBtn.style.background = 'rgba(0,0,0,0.05)';
+                } else {
+                    toggleBtn.style.color = 'white';
+                    toggleBtn.style.background = 'rgba(255,255,255,0.1)';
+                }
+            }
+        }
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        window.addEventListener('DOMContentLoaded', () => updateThemeIcon(savedTheme));
+    </script>
+</head>
+
+<body>
+
+    <section class="hero">
+        <nav class="nav">
+            <a href="#" class="logo">
+                <span
+                    style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: white; color: var(--primary); border-radius: 50%; font-size: 1.25rem;">E</span>
+                EduTrack Analytics
+            </a>
+            <div style="display: flex; align-items: center;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Dark Mode" title="Toggle Theme">
+                    <i class="ph ph-moon"></i>
+                </button>
+                <a href="{{ url_for('login') }}" class="btn btn-primary"
+                    style="padding: 0.6rem 1.5rem; font-size: 1rem;">Login Portal</a>
+            </div>
+        </nav>
+
+        <div class="hero-content">
+            <h1 class="hero-title">Academic Excellence Meets Intelligent Tracking.</h1>
+            <p class="hero-subtitle">
+                Welcome to the Charotar University of Science and Technology (CHARUSAT) officially recognized Student
+                Performance Management System. Designed exclusively for B.Tech departments.
+            </p>
+            <a href="#about" class="btn"
+                style="background: rgba(255,255,255,0.1); color: white; margin-right: 1rem; backdrop-filter: blur(10px);">Explore
+                CHARUSAT</a>
+        </div>
+    </section>
+
+    <section id="about" class="university-info">
+        <div class="info-grid">
+            <div class="info-content">
+                <span class="section-tag">About The Institution</span>
+                <h2>Charotar University of Science & Technology</h2>
+                <p>
+                    Established under the Gujarat Private University Act of 2009, CHARUSAT is a premier education
+                    institution built on a 125-year legacy of social service by the Shri Charotar Moti Sattavis Patidar
+                    Kelavani Mandal.
+                </p>
+                <p>
+                    Recognized as a "Centre of Excellence" by the Government of Gujarat and proudly holding a
+                    prestigious "A+" Grade accreditation from NAAC, we are deeply committed to blending the scholarly
+                    serenity of ancient learning centers like Takshashila with the robust rigor of modern educational
+                    powerhouses.
+                </p>
+            </div>
+
+            <div
+                style="width: 100%; height: 400px; border-radius: 2.5rem; overflow: hidden; box-shadow: 0 20px 40px -15px rgba(0,0,0,0.1); border: 1px solid rgba(226,232,240,0.5);">
+                <img src="https://resize.indiatvnews.com/en/resize/newbucket/1200_-/2019/09/charusat-1568285559.jpg"
+                    alt="CHARUSAT University Campus" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+        </div>
+
+        <div class="vision-mission-cards">
+            <div class="vm-card">
+                <h3>Our Vision</h3>
+                <p>To become a dynamic global institution in a knowledge-driven world through excellence in teaching,
+                    research, and social contribution—transforming Charotar into a Global Education Hub.</p>
+            </div>
+            <div class="vm-card">
+                <h3>Our Mission</h3>
+                <p>To foster an intellectual culture that develops graduates prepared for a life of purpose, service,
+                    and leadership. We aim to cultivate "Job Creators and not Job Seekers" armed with honesty,
+                    integrity, and accountability.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="system-details">
+        <div class="system-details-content">
+            <span class="section-tag" style="justify-content: center; display: flex;">Administrative Portal</span>
+            <h2>The Intelligent Performance Tracker</h2>
+            <p>
+                In pursuit of fostering global excellence, CHARUSAT has integrated an advanced predictive academic
+                software system tailored specifically for our B.Tech students. This platform centralizes 4-year academic
+                tracking and bridges the gap between active coursework and future career opportunities.
+            </p>
+
+            <div class="features-grid">
+                <div class="feature-item">
+                    <span class="feature-icon"><i class="ph ph-trend-up" style="color: var(--primary);"></i></span>
+                    <h4>Holistic Tracking</h4>
+                    <p>Both academic CGPA and non-curricular activities are comprehensively tracked over exactly 8
+                        designated semesters.</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon"><i class="ph ph-target" style="color: #6366f1;"></i></span>
+                    <h4>Career Alignment</h4>
+                    <p>The system intelligently maps your performance patterns against historical trends to anticipate
+                        and align your strengths with ideal future roles.</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon"><i class="ph ph-handshake" style="color: #10b981;"></i></span>
+                    <h4>Faculty Oversight</h4>
+                    <p>Professors have complete access to dynamic departmental analytics, allowing targeted intervention
+                        and support precisely when needed.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 2026 Charotar University of Science and Technology. All Rights Reserved.</p>
+        <p style="font-size: 0.85rem; padding-top: 0.5rem;">Access Restricted: Students (@charusat.edu.in) & Faculty
+            (@charusat.ac.in) Only.</p>
+    </footer>
+
+</body>
+
+</html>

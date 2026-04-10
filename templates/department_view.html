@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1>Department: {{ department }}</h1>
+            <p>Student Analytics Overview</p>
+        </div>
+        <a href="javascript:history.back()" class="btn-primary" style="width: auto; text-decoration: none;">&larr; Back</a>
+    </div>
+</div>
+
+<div class="card" style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead>
+            <tr style="border-bottom: 2px solid #e5e7eb; background: #f9fafb;">
+                <th style="padding: 1rem; color: var(--text-muted); font-weight: 600;">Student ID</th>
+                <th style="padding: 1rem; color: var(--text-muted); font-weight: 600;">Name</th>
+                <th style="padding: 1rem; color: var(--text-muted); font-weight: 600;">CGPA</th>
+                <th style="padding: 1rem; color: var(--text-muted); font-weight: 600;">Classification</th>
+                <th style="padding: 1rem; color: var(--text-muted); font-weight: 600;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr style="border-bottom: 1px solid #e5e7eb; transition: background 0.2s;">
+                <td style="padding: 1rem; font-weight: 500; color: var(--primary-color);">{{ student.id }}</td>
+                <td style="padding: 1rem;">{{ student.name }}</td>
+                <td style="padding: 1rem;">
+                    <span style="background: {% if student.cgpa >= 8.5 %}#d1fae5; color: #065f46{% elif student.cgpa >= 7.5 %}#fef3c7; color: #92400e{% else %}#fee2e2; color: #991b1b{% endif %}; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-weight: bold;">
+                        {{ student.cgpa }}
+                    </span>
+                </td>
+                <td style="padding: 1rem;">{{ 'Distinction' if student.cgpa >= 8.0 else 'First Class' }}</td>
+                <td style="padding: 1rem;">
+                    <a href="{{ url_for('view_student_profile', student_id=student.id) }}" class="btn-primary" style="padding: 0.5rem 1rem; width: auto; font-size: 0.875rem; text-decoration: none; display: inline-block;">View Profile</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-header" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem; margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        <div>
+            <h2 style="font-size: 2rem; margin-bottom: 0.5rem; color: #0f172a; font-weight: 800; letter-spacing: -0.025em;">Student Profile</h2>
+            <p style="color: #64748b; font-size: 1.125rem;">Detailed academic analytics for {{ profile.name }}</p>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+            <a href="{{ url_for('export_student_transcript', student_id=profile.id) }}" class="btn-primary" style="background-color: #10b981; width: auto; text-decoration: none; padding: 0.5rem 1.5rem; border-radius: 9999px; display: flex; align-items: center; gap: 0.5rem;"><i class="ph ph-download-simple"></i> Export Transcript</a>
+            <a href="javascript:history.back()" class="btn-primary" style="width: auto; text-decoration: none; padding: 0.5rem 1.5rem; border-radius: 9999px;">&larr; Back</a>
+        </div>
+    </div>
+</div>
+
+<!-- Profile Header Card -->
+<div class="card" style="padding: 2rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
+    <div style="width: 90px; height: 90px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.25rem; font-weight: bold; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">
+        {{ profile.name[0] if profile.name and profile.name != 'Unknown' else '?' }}
+    </div>
+    <div style="flex: 1; min-width: 200px;">
+        <h2 style="font-size: 1.75rem; color: #0f172a; margin-bottom: 0.25rem; font-weight: 800;">{{ profile.name }}</h2>
+        <p style="color: #64748b; font-size: 1rem; margin-bottom: 0.5rem;">{{ profile.email }}</p>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <span style="background: #e0e7ff; color: #4338ca; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.8rem; font-weight: 600;">ID: {{ profile.id }}</span>
+            <span style="background: #dcfce7; color: #15803d; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.8rem; font-weight: 600;">{{ profile.department }}</span>
+            <span style="background: #fef3c7; color: #92400e; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.8rem; font-weight: 600;">Year {{ profile.year }} · Sem {{ profile.semester }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- KPI Metrics -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+    <div class="card" style="padding: 1.5rem; text-align: center; border-top: 4px solid #6366f1;">
+        <h4 style="color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Current CGPA</h4>
+        <p style="font-size: 2.5rem; font-weight: 800; color: {% if profile.cgpa >= 8.0 %}#059669{% elif profile.cgpa >= 6.0 %}#d97706{% else %}#dc2626{% endif %};">{{ profile.cgpa }}</p>
+    </div>
+    <div class="card" style="padding: 1.5rem; text-align: center; border-top: 4px solid #10b981;">
+        <h4 style="color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Co-Curricular</h4>
+        <p style="font-size: 2.5rem; font-weight: 800; color: #0f172a;">{{ profile.co_curricular_score }}</p>
+    </div>
+    <div class="card" style="padding: 1.5rem; text-align: center; border-top: 4px solid #f59e0b;">
+        <h4 style="color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Extra-Curricular</h4>
+        <p style="font-size: 2.5rem; font-weight: 800; color: #0f172a;">{{ profile.extra_curricular_score }}</p>
+    </div>
+    <div class="card" style="padding: 1.5rem; text-align: center; border-top: 4px solid #8b5cf6;">
+        <h4 style="color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">College</h4>
+        <p style="font-size: 1.1rem; font-weight: 700; color: #0f172a; margin-top: 0.5rem;">{{ profile.college }}</p>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-bottom: 2rem;">
+    <!-- Subject Marks -->
+    <div class="card" style="padding: 2rem;">
+        <h3 style="margin-bottom: 0.5rem; color: #1e293b; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;"><i class="ph ph-books" style="color: var(--primary-color); font-size: 1.5rem;"></i> Subject-wise Marks</h3>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Individual subject performance breakdown.</p>
+        {% if subject_marks %}
+        <div style="max-height: 350px; overflow-y: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #e5e7eb; background: #f9fafb; position: sticky; top: 0;">
+                        <th style="padding: 0.75rem; color: var(--text-muted); font-weight: 600; font-size: 0.875rem;">Subject</th>
+                        <th style="padding: 0.75rem; color: var(--text-muted); font-weight: 600; font-size: 0.875rem; text-align: right;">Marks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subject, marks in subject_marks.items() %}
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 0.75rem; font-size: 0.875rem;">{{ subject }}</td>
+                        <td style="padding: 0.75rem; text-align: right;">
+                            <span style="background: {% if marks >= 80 %}#d1fae5; color: #065f46{% elif marks >= 60 %}#fef3c7; color: #92400e{% else %}#fee2e2; color: #991b1b{% endif %}; padding: 0.2rem 0.6rem; border-radius: 0.25rem; font-weight: 700; font-size: 0.875rem;">
+                                {{ marks }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 2rem; color: #94a3b8;">
+            <p style="margin-bottom: 0.5rem;"><i class="ph ph-folder-open" style="font-size: 2rem;"></i></p>
+            <p>No subject marks recorded yet.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Career Predictions -->
+    <div class="card" style="padding: 2rem;">
+        <h3 style="margin-bottom: 0.5rem; color: #1e293b; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;"><i class="ph ph-target" style="color: #6366f1; font-size: 1.5rem;"></i> AI Career Predictions</h3>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">ML-driven career trajectory predictions based on academic profile.</p>
+        {% if predictions %}
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            {% for pred in predictions %}
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <p style="font-weight: 700; color: #1e293b; margin-bottom: 0.15rem;">{{ pred.career }}</p>
+                    <p style="font-size: 0.75rem; color: #94a3b8;">Predicted Trajectory {{ loop.index }}</p>
+                </div>
+                <div style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 0.35rem 0.85rem; border-radius: 9999px; font-weight: 700; font-size: 0.875rem;">
+                    {{ pred.confidence }}%
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 2rem; color: #94a3b8;">
+            <p style="margin-bottom: 0.5rem;"><i class="ph ph-robot" style="font-size: 2rem;"></i></p>
+            <p>Insufficient data for predictions.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Strengths & Weaknesses -->
+<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
+    <div class="card" style="padding: 2rem; border-top: 4px solid #10b981;">
+        <h3 style="margin-bottom: 1rem; color: #065f46; font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;"><i class="ph ph-check-circle"></i> Strong Subjects (≥80)</h3>
+        {% if strong_subjects %}
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+            {% for s in strong_subjects %}
+            <span style="background: #d1fae5; color: #065f46; padding: 0.35rem 0.75rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 600;">{{ s }}</span>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color: #94a3b8; font-size: 0.875rem;">No subjects at ≥80 marks yet.</p>
+        {% endif %}
+    </div>
+    <div class="card" style="padding: 2rem; border-top: 4px solid #ef4444;">
+        <h3 style="margin-bottom: 1rem; color: #991b1b; font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;"><i class="ph ph-warning-circle"></i> Weak Subjects (&lt;75)</h3>
+        {% if weak_subjects %}
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+            {% for s in weak_subjects %}
+            <span style="background: #fee2e2; color: #991b1b; padding: 0.35rem 0.75rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 600;">{{ s }}</span>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color: #94a3b8; font-size: 0.875rem;">No weak subjects — great performance!</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

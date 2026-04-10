@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-header" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem; margin-bottom: 2rem;">
+    <div style="flex: 1;">
+        <h2 style="font-size: 2rem; margin-bottom: 0.5rem; color: #0f172a; font-weight: 800; letter-spacing: -0.025em;">Activity Moderation</h2>
+        <p style="color: #64748b; font-size: 1.125rem;">Review student submissions and assign profile points accordingly.</p>
+    </div>
+    <a href="{{ url_for('faculty_dashboard') }}" class="btn-primary" style="text-decoration: none;">← Back to Dashboard</a>
+</div>
+
+<div class="card" style="padding: 2rem; overflow: hidden;">
+    <h3 style="margin-bottom: 0.5rem; color: #1e293b; font-size: 1.25rem;">Pending Submissions Directory</h3>
+    <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Cross-reference proof and award points which autonomously update the target student's AI vector model.</p>
+    
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; text-align: left; border-collapse: collapse; min-width: 800px;">
+            <thead>
+                <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b; font-size: 0.875rem;">
+                    <th style="padding: 0.75rem 0.5rem;">Student</th>
+                    <th style="padding: 0.75rem 0.5rem;">Subject/Type</th>
+                    <th style="padding: 0.75rem 0.5rem;">Description</th>
+                    <th style="padding: 0.75rem 0.5rem;">Proof (File)</th>
+                    <th style="padding: 0.75rem 0.5rem;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for act in activities %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 1rem 0.5rem; font-family: monospace; font-weight: 600;">
+                        {{ act.student_id }}<br>
+                        <small style="color: #64748b; font-family: sans-serif; font-weight: 400;">
+                            {% if act.users and act.users.name %} {{ act.users.name }} {% else %} Unknown {% endif %}
+                        </small>
+                    </td>
+                    <td style="padding: 1rem 0.5rem;">
+                        <span style="background: 
+                            {% if act.activity_type == 'co_curricular' %}#dcfce7{% else %}#fef3c7{% endif %}; 
+                            color: {% if act.activity_type == 'co_curricular' %}#166534{% else %}#92400e{% endif %}; 
+                            padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">
+                            {{ act.activity_type.replace('_', ' ') }}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem 0.5rem; color: #334155; font-size: 0.875rem; max-width: 300px;">{{ act.description }}</td>
+                    <td style="padding: 1rem 0.5rem;">
+                        {% if act.proof_url %}
+                        <a href="{{ url_for('static', filename='uploads/' + act.proof_url) }}" target="_blank" style="color: #3b82f6; text-decoration: underline; font-weight: 600; font-size: 0.875rem;">View Document</a>
+                        {% else %}
+                        <span style="color: #94a3b8; font-size: 0.875rem;">No file</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 1rem 0.5rem;">
+                        <form action="{{ url_for('score_activity') }}" method="POST" style="display: flex; gap: 0.5rem; align-items: center;">
+                            <input type="hidden" name="activity_id" value="{{ act.id }}">
+                            <input type="hidden" name="student_id" value="{{ act.student_id }}">
+                            <input type="hidden" name="activity_type" value="{{ act.activity_type }}">
+                            <input type="number" step="0.1" min="0" max="5" name="points" required placeholder="Pts (0-5)" style="width: 80px; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #cbd5e1; box-sizing: border-box; font-size: 0.875rem;">
+                            <button type="submit" style="background: #10b981; color: white; border: none; padding: 0.5rem 1rem; border-radius: 9999px; cursor: pointer; font-weight: 600; font-size: 0.875rem; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);">Award</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not activities %}
+                <tr><td colspan="5" style="padding: 3rem; text-align: center; color: #94a3b8; font-size: 1.1rem;">🎉 All caught up! No pending submissions.</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

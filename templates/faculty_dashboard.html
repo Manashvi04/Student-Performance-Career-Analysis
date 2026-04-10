@@ -1,26 +1,147 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="dashboard-header">
-    <h1>Faculty Dashboard</h1>
-    <p>Welcome, Professor {{ user_id }}.</p>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="dashboard-header" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem; margin-bottom: 2rem;">
+    <div style="flex: 1;">
+        <h2 style="font-size: 2rem; margin-bottom: 0.5rem; color: #0f172a; font-weight: 800; letter-spacing: -0.025em;">Faculty Portal</h2>
+        <p style="color: #64748b; font-size: 1.125rem;">Course analytics, student performance tracking, and bulk grade management.</p>
+    </div>
+    <div class="user-info">
+        <p style="font-weight: 600; color: var(--primary-color); background: #e0e7ff; padding: 0.5rem 1rem; border-radius: 2rem;">Prof. {{ user_id }}</p>
+    </div>
 </div>
 
-<div class="dashboard-grid">
-    <div class="card">
-        <h3>My Students</h3>
-        <p>View performance metrics of students under your mentorship.</p>
+<!-- KPI Summary Blocks -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+    <div class="card" style="padding: 1.5rem; text-align: left; border-left: 4px solid #3b82f6; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        <h4 style="color: #64748b; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Active Courses</h4>
+        <p style="font-size: 2.25rem; font-weight: 800; color: #0f172a;">{{ active_courses }}</p>
     </div>
-    
-    <div class="card">
-        <h3>Class Analytics</h3>
-        <p>Overall academic performance trends of the classes you teach.</p>
+    <div class="card" style="padding: 1.5rem; text-align: left; border-left: 4px solid #10b981; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        <h4 style="color: #64748b; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Total Students</h4>
+        <p style="font-size: 2.25rem; font-weight: 800; color: #0f172a;">{{ total_students }}</p>
+    </div>
+    <div class="card" style="padding: 1.5rem; text-align: left; border-left: 4px solid #f59e0b; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        <h4 style="color: #64748b; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Class Avg GPA</h4>
+        <p style="font-size: 2.25rem; font-weight: 800; color: #0f172a;">{{ class_avg_gpa }}</p>
     </div>
 
-    <div class="card">
-        <h3>Input Grades & feedback</h3>
-        <p>Update student records, add skill assessments, and provide qualitative feedback.</p>
-        <button class="btn-primary" style="margin-top: 1rem;">Add Assessment</button>
+</div>
+
+<div class="dashboard-grid" style="grid-template-columns: repeat(3, 1fr); gap: 2rem;">
+    <!-- Chart -->
+    <div class="card" style="grid-column: span 2; padding: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem;">
+            <div>
+                <h3 style="margin-bottom: 0.5rem; color: #1e293b; font-size: 1.25rem;">Class Grade Distribution</h3>
+                <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">
+                    Currently Viewing: <strong style="color: var(--primary-color);">{% if req_dep %}{{ req_dep }}{% else %}All Departments{% endif %} | {% if req_sem %}Semester {{ req_sem }}{% else %}All Semesters{% endif %}</strong>
+                </p>
+            </div>
+            
+            <form action="{{ url_for('faculty_dashboard') }}" method="GET" style="display: flex; gap: 0.5rem;">
+                <select name="d" style="padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #cbd5e1; font-size: 0.875rem; background: #f8fafc;">
+                    <option value="">All Depts</option>
+                    {% for dep in departments %}
+                        <option value="{{ dep }}" {% if req_dep == dep %}selected{% endif %}>{{ dep }}</option>
+                    {% endfor %}
+                </select>
+                <select name="s" style="padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #cbd5e1; font-size: 0.875rem; background: #f8fafc;">
+                    <option value="">All Sems</option>
+                    <option value="1" {% if req_sem == '1' %}selected{% endif %}>Sem 1</option>
+                    <option value="2" {% if req_sem == '2' %}selected{% endif %}>Sem 2</option>
+                    <option value="3" {% if req_sem == '3' %}selected{% endif %}>Sem 3</option>
+                    <option value="4" {% if req_sem == '4' %}selected{% endif %}>Sem 4</option>
+                    <option value="5" {% if req_sem == '5' %}selected{% endif %}>Sem 5</option>
+                    <option value="6" {% if req_sem == '6' %}selected{% endif %}>Sem 6</option>
+                    <option value="7" {% if req_sem == '7' %}selected{% endif %}>Sem 7</option>
+                    <option value="8" {% if req_sem == '8' %}selected{% endif %}>Sem 8</option>
+                </select>
+                <button type="submit" class="btn-primary" style="padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem;">Filter Graph</button>
+            </form>
+        </div>
+        <div style="position: relative; height:320px; width:100%">
+            <canvas id="gradeChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Upload Panel -->
+    <div class="card" style="grid-column: span 1; padding: 2rem; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
+        <h3 style="margin-bottom: 0.5rem; color: #1e293b; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;"><i class="ph ph-folder"></i> Bulk Data Intake</h3>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Upload student assessment marks en-masse using an Excel or CSV file mapping.</p>
+        
+        <form action="{{ url_for('faculty_upload_marks') }}" method="POST" enctype="multipart/form-data" style="margin-top: auto; border: 2px dashed #cbd5e1; padding: 1.5rem; border-radius: 0.75rem; background: white;">
+            
+            <div class="form-group" style="margin-bottom: 0.75rem; text-align: left;">
+                <label style="display: block; margin-bottom: 0.25rem; color: #64748b; font-size: 0.875rem; font-weight: 600;">Subject Mapping Name</label>
+                <input type="text" name="batch_subject" required placeholder="e.g. Database Systems" style="width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #cbd5e1;">
+            </div>
+            
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; text-align: left;">
+                <div style="flex: 1;">
+                    <label style="display: block; margin-bottom: 0.25rem; color: #64748b; font-size: 0.875rem; font-weight: 600;">Semester</label>
+                    <input type="number" name="batch_semester" required value="1" min="1" max="8" style="width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #cbd5e1;">
+                </div>
+                <div style="flex: 1;">
+                    <label style="display: block; margin-bottom: 0.25rem; color: #64748b; font-size: 0.875rem; font-weight: 600;">Batch Year</label>
+                    <input type="number" name="batch_year" required value="1" min="1" max="4" style="width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #cbd5e1;">
+                </div>
+                <div style="flex: 1;">
+                    <label style="display: block; margin-bottom: 0.25rem; color: #64748b; font-size: 0.875rem; font-weight: 600;">Max Exam Marks</label>
+                    <input type="number" name="batch_total_marks" required value="100" min="1" style="width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #cbd5e1;">
+                </div>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 1rem; text-align: left;">
+                <label style="display: block; margin-bottom: 0.25rem; color: #64748b; font-size: 0.875rem; font-weight: 600;">Target Department</label>
+                <input type="text" name="batch_department" required placeholder="e.g. Computer Science" style="width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #cbd5e1;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1rem; text-align: left;">
+                <label style="display: block; margin-bottom: 0.5rem; color: #64748b; font-size: 0.875rem; font-weight: 500;">Attach File (Req cols: id, marks)</label>
+                <input type="file" name="marks_file" accept=".csv, .xlsx" required style="width: 100%; padding: 0.5rem; border-radius: 0.5rem; background: #f1f5f9; font-size: 0.875rem;">
+            </div>
+            <button type="submit" class="btn-primary" style="padding: 0.75rem; font-size: 0.875rem; width: 100%; border-radius: 9999px;">Upload & Parse</button>
+        </form>
+    </div>
+
+    <!-- Department Selector -->
+    <div class="card" style="grid-column: span 3; padding: 2rem;">
+        <h3 style="margin-bottom: 0.5rem; color: #1e293b; font-size: 1.25rem;">Student Rosters & Analytics</h3>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Select your department below to view full student tracking analytics, grades, and profile summaries.</p>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+            {% for dept in departments %}
+                <a href="{{ url_for('view_department', dept_name=dept) }}" class="btn-primary" style="background: white; border: 2px solid #e2e8f0; color: #334155; text-decoration: none; padding: 1rem; text-align: center; border-radius: 0.75rem; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05rem; transition: all 0.2s;">
+                    {{ dept }} →
+                </a>
+            {% endfor %}
+        </div>
     </div>
 </div>
+
+<script>
+    const ctxGrade = document.getElementById('gradeChart').getContext('2d');
+    new Chart(ctxGrade, {
+        type: 'bar',
+        data: {
+            labels: {{ grade_labels|tojson }},
+            datasets: [{
+                label: '% of Students',
+                data: {{ grade_data|tojson }},
+                backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                borderColor: '#3b82f6',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { min: 0, max: 100 }
+            }
+        }
+    });
+</script>
 {% endblock %}
