@@ -23,14 +23,6 @@ A sophisticated, full-stack predictive academic tracking platform designed to br
 
 ---
 
-## 👥 Team Members
-- Manashvi Choksi
-- Princee Bhingradiya
-- Stuti Gondha
-- Krish Sabhaya
-
----
-
 ## 🛠️ Technology Stack
 
 **Backend Architecture:**
@@ -105,3 +97,11 @@ The application will default to running on `http://127.0.0.1:5000/`.
 This project heavily prioritizes Frontend Engineering rules outlined internally. Please avoid injecting generic component libraries (Bootstrap/Tailwind defaults) and respect the native `css/style.css` architecture. Maintain strict variable consistency across the project. 
 
 *Designed and engineered originally for internal academic tracking.*
+
+---
+
+## 👥 Team Members
+- Manashvi Choksi
+- Princee Bhingradiya
+- Stuti Gondha
+- Krish Sabhaya
