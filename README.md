@@ -43,8 +43,8 @@ A sophisticated, full-stack predictive academic tracking platform designed to br
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/student-performance-analyzer.git
-cd student-performance-analyzer
+git clone https://github.com/your-username/Student-Performance-Career-Analysis.git
+cd Student-Performance-Career-Analysis
 ```
 
 ### 2. Establish Virtual Environment
