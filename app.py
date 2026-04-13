@@ -518,18 +518,19 @@ def admin_users():
             
         if supabase:
             try:
+                department = request.form.get('department', 'Unknown')
                 # Insert into users table
                 supabase.table('users').insert({
                     'id': user_id,
                     'password': password,
                     'role': role,
                     'name': name,
-                    'email': email
+                    'email': email,
+                    'department': department
                 }).execute()
                 
                 # If student, initialize profile
                 if role == 'student':
-                    department = request.form.get('department', 'Unknown')
                     supabase.table('student_profiles').insert({
                         'student_id': user_id,
                         'department': department,
@@ -548,7 +549,7 @@ def admin_users():
     users_list = []
     if supabase:
         try:
-            resp = supabase.table('users').select('id, name, email, role, password, created_at').order('created_at', desc=True).execute()
+            resp = supabase.table('users').select('id, name, email, role, password, department, created_at').order('created_at', desc=True).execute()
             if resp.data:
                 users_list = resp.data
         except Exception as e:
@@ -862,22 +863,23 @@ def admin_bulk_users():
                         else:
                             dynamo_pass = str(raw_pass)
                             
+                        dept = row.get('department')
+                        if pd.isna(dept) or str(dept).lower() == 'nan' or not dept: 
+                            dept = batch_dept
+                        else: 
+                            dept = str(dept)
+                        if not dept: dept = 'Unknown'
+                            
                         supabase.table('users').insert({
                             'id': str(row['id']),
                             'password': dynamo_pass,
                             'role': role_val,
                             'name': str(row['name']),
-                            'email': str(row['email'])
+                            'email': str(row['email']),
+                            'department': dept
                         }).execute()
                         
                         if role_val == 'student':
-                            dept = row.get('department')
-                            if pd.isna(dept) or str(dept).lower() == 'nan' or not dept: 
-                                dept = batch_dept
-                            else: 
-                                dept = str(dept)
-                            if not dept: dept = 'Unknown'
-                            
                             supabase.table('student_profiles').insert({
                                 'student_id': str(row['id']),
                                 'department': dept,

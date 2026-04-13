@@ -85,7 +85,7 @@
                 </div>
                 <div id="studentFields" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #cbd5e1; display: block;">
                     <div class="form-group" style="margin-bottom: 0.75rem;">
-                        <label style="font-size: 0.875rem; font-weight: 600; color: #334155; margin-bottom: 0.25rem; display: block;">Initial Department (Student Only)</label>
+                        <label style="font-size: 0.875rem; font-weight: 600; color: #334155; margin-bottom: 0.25rem; display: block;">Assigned Department</label>
                         <select name="department" style="width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #cbd5e1; box-sizing: border-box; background: white;">
                             <option value="IT">Information Technology (IT)</option>
                             <option value="CE">Computer Engineering (CE)</option>
@@ -106,12 +106,20 @@
                 <p style="color: var(--text-muted); font-size: 0.875rem;">Live view of all authenticated identities registered on the domain. Categorized for structural clarity.</p>
             </div>
             
-            <!-- Modern Pill Toggles -->
-            <div style="display: flex; background: #f1f5f9; padding: 0.35rem; border-radius: 9999px; gap: 0.25rem;">
-                <button onclick="switchTab('all')" id="tab-all" style="padding: 0.5rem 1rem; border-radius: 9999px; border: none; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; background: var(--primary-color); color: white;">All Identities</button>
-                <button onclick="switchTab('student')" id="tab-student" style="padding: 0.5rem 1rem; border-radius: 9999px; border: none; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: #475569;">Students</button>
-                <button onclick="switchTab('faculty')" id="tab-faculty" style="padding: 0.5rem 1rem; border-radius: 9999px; border: none; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: #475569;">Faculty</button>
-                <button onclick="switchTab('admin')" id="tab-admin" style="padding: 0.5rem 1rem; border-radius: 9999px; border: none; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: #475569;">Admins</button>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <select id="userDeptFilter" onchange="applyFilters()" style="padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid #cbd5e1; font-size: 0.875rem; font-weight: 600; color: #475569; background: white; cursor: pointer;">
+                    <option value="all">All Departments</option>
+                    <option value="IT">IT</option>
+                    <option value="CE">CE</option>
+                    <option value="CS">CS</option>
+                </select>
+                <!-- Modern Pill Toggles -->
+                <div style="display: flex; background: #f1f5f9; padding: 0.35rem; border-radius: 9999px; gap: 0.25rem;">
+                    <button onclick="switchTab('all')" id="tab-all" style="padding: 0.5rem 1rem; border-radius: 9999px; border: none; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; background: var(--primary-color); color: white;">All Identities</button>
+                    <button onclick="switchTab('student')" id="tab-student" style="padding: 0.5rem 1rem; border-radius: 9999px; border: none; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: #475569;">Students</button>
+                    <button onclick="switchTab('faculty')" id="tab-faculty" style="padding: 0.5rem 1rem; border-radius: 9999px; border: none; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: #475569;">Faculty</button>
+                    <button onclick="switchTab('admin')" id="tab-admin" style="padding: 0.5rem 1rem; border-radius: 9999px; border: none; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: #475569;">Admins</button>
+                </div>
             </div>
         </div>
         
@@ -128,7 +136,7 @@
                 </thead>
                 <tbody id="user-table-body">
                     {% for user in users %}
-                    <tr class="user-row" data-role="{{ user.role }}" style="border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+                    <tr class="user-row" data-role="{{ user.role }}" data-dept="{{ user.department or 'Unknown' }}" style="border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
                         <td style="padding: 1rem 0.5rem;">
                             <span style="font-family: monospace; font-weight: 700; color: #0f172a;">{{ user.id }}</span><br>
                             <span style="color: #64748b; font-size: 0.875rem;">{{ user.name }}</span>
@@ -142,9 +150,10 @@
                             <span style="background: 
                                 {% if user.role == 'admin' %}#fee2e2{% elif user.role == 'faculty' %}#ccfbf1{% else %}#e0e7ff{% endif %}; 
                                 color: {% if user.role == 'admin' %}#991b1b{% elif user.role == 'faculty' %}#0f766e{% else %}#3730a3{% endif %}; 
-                                padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; display: inline-block;">
+                                padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; display: inline-block; margin-bottom: 0.25rem;">
                                 {{ user.role }}
-                            </span>
+                            </span><br>
+                            <span style="color: #64748b; font-size: 0.75rem; font-weight: 600;">{{ user.department or 'N/A' }}</span>
                         </td>
                         <td style="padding: 1rem 0.5rem; color: #334155; font-size: 0.875rem;">{{ user.email }}</td>
                         <td style="padding: 1rem 0.5rem;">
@@ -166,7 +175,9 @@
 </div>
 
 <script>
-    function switchTab(role) {
+    let currentRole = 'all';
+
+    function applyFilters() {
         // Reset all buttons
         const tabs = ['all', 'student', 'faculty', 'admin'];
         tabs.forEach(t => {
@@ -177,18 +188,40 @@
             }
         });
         
-        // Highlight active
-        const activeBtn = document.getElementById('tab-' + role);
+        // Highlight active role toggle
+        const activeBtn = document.getElementById('tab-' + currentRole);
         if(activeBtn) {
             activeBtn.style.background = 'var(--primary-color)';
             activeBtn.style.color = 'white';
         }
 
+        const deptFilter = document.getElementById('userDeptFilter').value.toLowerCase();
+
         // Filter rows
         const rows = document.querySelectorAll('.user-row');
         let visibleCount = 0;
         rows.forEach(r => {
-            if (role === 'all' || r.getAttribute('data-role') === role) {
+            const rowRole = r.getAttribute('data-role');
+            const rowDept = (r.getAttribute('data-dept') || '').toLowerCase();
+            
+            const matchRole = (currentRole === 'all' || rowRole === currentRole);
+            let matchDept = false;
+            
+            if (deptFilter === 'all') {
+                matchDept = true;
+            } else if (deptFilter === 'it') {
+                matchDept = rowDept.includes('it') || rowDept.includes('information technology');
+            } else if (deptFilter === 'ce') {
+                matchDept = rowDept.includes('ce') || rowDept.includes('computer engineering');
+            } else if (deptFilter === 'cs') {
+                matchDept = rowDept.includes('cs') || rowDept.includes('computer science');
+            } else if (deptFilter === 'unknown') {
+                matchDept = rowDept === '' || rowDept === 'n/a' || rowDept.includes('unknown');
+            } else {
+                matchDept = rowDept.includes(deptFilter);
+            }
+            
+            if (matchRole && matchDept) {
                 r.style.display = '';
                 visibleCount++;
             } else {
@@ -206,31 +239,19 @@
         } else if (emptyRow && visibleCount > 0) {
             emptyRow.remove();
         } else if (emptyRow) {
-            emptyRow.innerHTML = '<td colspan="5" style="padding: 2rem; text-align: center; color: #94a3b8;">No records found matching this filter.</td>';
             emptyRow.style.display = visibleCount === 0 ? '' : 'none';
         }
     }
 
+    function switchTab(role) {
+        currentRole = role;
+        applyFilters();
+    }
+
     const roleSelect = document.getElementById('roleSelect');
-    const studentFields = document.getElementById('studentFields');
-    roleSelect.addEventListener('change', (e) => {
-        if(e.target.value === 'student') {
-            studentFields.style.display = 'block';
-        } else {
-            studentFields.style.display = 'none';
-        }
-    });
+    // studentFields display toggle removed, it now shows for everyone!
 
     const batchRoleSelect = document.getElementById('batchRoleSelect');
-    const batchDeptGroup = document.getElementById('batchDeptGroup');
-    if (batchRoleSelect) {
-        batchRoleSelect.addEventListener('change', (e) => {
-            if (e.target.value === 'student') {
-                batchDeptGroup.style.display = 'block';
-            } else {
-                batchDeptGroup.style.display = 'none';
-            }
-        });
-    }
+    // batchDeptGroup display toggle removed, shows for everyone!
 </script>
 {% endblock %}
